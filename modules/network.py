@@ -4,6 +4,7 @@ from modules import devices
 from modules import generator
 from modules import printer
 from modules import powerConfigurator
+from modules import colorConfigurator
 import math
 import random
 import pickle
@@ -31,6 +32,7 @@ class CellularNetwork:
         self.Generator = generator.Generator(self)
         self.Printer = printer.Printer(self)
         self.powerConfigurator = powerConfigurator.pygmoPowerConfigurator(self)
+        self.colorConfigurator = colorConfigurator.pygmoColorConfigurator(self)
 
     def saveNetworkToFile(self, filename):
         with open(filename, 'wb') as f:
@@ -55,10 +57,12 @@ class CellularNetwork:
         for ue in self.ue:
             ue.connectToTheBestBS(self.bs)
 
-    def setPowerInAllBS(self, powerLevel):
+    def setPowerInAllBS(self, outsidePowerLevel, insidePowerLevel=None):
+        if (insidePowerLevel==None):
+            insidePowerLevel = outsidePowerLevel - 3
         for bs in self.bs:
-            bs.insidePower = powerLevel - 3
-            bs.outsidePower = powerLevel
+            bs.insidePower = insidePowerLevel
+            bs.outsidePower = outsidePowerLevel
 
     def setRandomPowerInAllBS(self, powerLevel):
         for bs in self.bs:
@@ -82,8 +86,26 @@ class CellularNetwork:
 
     def setMiInAllBS(self, mi):
         for bs in self.bs:
-            bs.internalRadius = mi * 1666.3793
             bs.mi = mi
+
+    def setColorRandomlyInAllBS(self):
+        for bs in self.bs:
+            bs.color = random.randint(1,3)
+
+    def setColorInAllBS(self, color):
+        for bs in self.bs:
+            bs.color = color
+
+    def getColorInAllBS(self):
+        for bs in self.bs:
+            print(bs.ID, bs.color)
+
+    def setColorInBS(self, bs, color):
+        self.bs[bs].color = color
+
+    def setRcInAllBS(self, Rc):
+        for bs in self.bs:
+            bs.Rc = Rc
 
     def calculateSINRVectorForAllUE(self):
         temp_measured_vector = []
@@ -166,6 +188,19 @@ class CellularNetwork:
         for ue in self.ue:
             numberOfConnectedUEToBS[ue.connectedToBS] += 1
         return numberOfConnectedUEToBS
+
+    def returnBSconfig(self):
+        networkConfig = []
+        for i in range(len(self.bs)):
+            bsConfig = []
+            bsConfig.append(self.bs[i].ID)
+            bsConfig.append(self.bs[i].Rc)
+            bsConfig.append(self.bs[i].mi)
+            bsConfig.append(self.bs[i].color)
+            bsConfig.append(self.bs[i].insidePower)
+            bsConfig.append(self.bs[i].outsidePower)
+            networkConfig.append(bsConfig)
+        return networkConfig
 
     def calculateIfSollutionCanBeAccepted(self, bs_vector):
         ue_copy = copy.deepcopy(self.ue)
@@ -528,7 +563,8 @@ class CellularNetwork:
                 ue.y = y
                 ue.connectToNearestBS(self.bs)
                 if ue.connectedToBS == bsnumber:
-                    if ue.distanceToBS(self.bs[bsnumber]) < self.bs[bsnumber].mi * 1666.3793:
+                    #if ue.distanceToBS(self.bs[bsnumber]) < self.bs[bsnumber].mi * self.bs[bsnumber].Rc:
+                    if ue.inside:
                         sumOfInternalThroughput = sumOfInternalThroughput + ue.calculateMaxThroughputOfTheNode(self.bs)
                         internalBS = internalBS + 1
                     else:
