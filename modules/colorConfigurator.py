@@ -6,7 +6,7 @@ from modules.colorOptimizationProblemsDef import maximalThroughputProblemFS
 
 import copy
 
-numberOfThreads = 4
+numberOfThreads = 6
 
 class pygmoColorConfigurator:
     def __init__(self,parent):
