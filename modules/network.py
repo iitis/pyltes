@@ -1,4 +1,4 @@
-__author__ = 'Mariusz'
+__author__ = 'Mariusz Słabicki, Konrad Połys'
 
 from modules import devices
 from modules import generator
@@ -140,21 +140,23 @@ class CellularNetwork:
 
     def returnRealUEThroughputVectorRR(self):
         numberOfConnectedUEToBS = []
-        totalThroughputPerBS = []
         max_UE_throughput_vector = []
         real_UE_throughput_vector = []
         for i in range(len(self.bs)):
-            zero = 0
-            numberOfConnectedUEToBS.append(zero)
-            totalThroughputPerBS.append(zero)
+            numberOfConnectedUEToBS.append([0,0])
         for ue in self.ue:
-            numberOfConnectedUEToBS[ue.connectedToBS] += 1
-            max_UE_throughput = ue.calculateMaxThroughputOfTheNode(self.bs)
+            max_UE_throughput = ue.calculateMaxThroughputOfTheNode(self.bs) # need to be first to know where UE is
+            if (ue.inside):
+                numberOfConnectedUEToBS[ue.connectedToBS][0] += 1
+            else:
+                numberOfConnectedUEToBS[ue.connectedToBS][1] += 1
             max_UE_throughput_vector.append(max_UE_throughput)
             real_UE_throughput_vector.append(max_UE_throughput)
-            totalThroughputPerBS[ue.connectedToBS] += max_UE_throughput
         for i in range(len(self.ue)):
-            real_UE_throughput_vector[i] = max_UE_throughput_vector[i] / numberOfConnectedUEToBS[self.ue[i].connectedToBS]
+            if (self.ue[i].inside):
+                real_UE_throughput_vector[i] = max_UE_throughput_vector[i] / numberOfConnectedUEToBS[self.ue[i].connectedToBS][0]
+            else:
+                real_UE_throughput_vector[i] = max_UE_throughput_vector[i] / numberOfConnectedUEToBS[self.ue[i].connectedToBS][1]
         return real_UE_throughput_vector
 
     def returnRealUEThroughputVectorFS(self):

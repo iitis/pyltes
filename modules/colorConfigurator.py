@@ -1,4 +1,4 @@
-__author__ = 'mslabicki'
+__author__ = 'Mariusz Słabicki, Konrad Połys'
 
 from PyGMO import *
 from modules.colorOptimizationProblemsDef import maximalThroughputProblemRR
@@ -6,7 +6,7 @@ from modules.colorOptimizationProblemsDef import maximalThroughputProblemFS
 
 import copy
 
-numberOfThreads = 8
+numberOfThreads = 4
 
 class pygmoColorConfigurator:
     def __init__(self,parent):
