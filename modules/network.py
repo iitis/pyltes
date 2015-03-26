@@ -138,6 +138,36 @@ class CellularNetwork:
             if ecdf(value) >= 0.5:
                 return -1*value
 
+    def returnRealAvgUEThroughputPerBsRR(self):
+        numberOfConnectedUEToBS = []
+        throughputSumPerBS = []
+        max_UE_throughput_vector = []
+        real_UE_throughput_vector = []
+        realAvgUEThroughputPerBs = []
+        for i in range(len(self.bs)):
+            numberOfConnectedUEToBS.append([0,0])
+            throughputSumPerBS.append([0,0])
+            realAvgUEThroughputPerBs.append(0)
+        for ue in self.ue:
+            max_UE_throughput = ue.calculateMaxThroughputOfTheNode(self.bs) # need to be first to know where UE is
+            if (ue.inside):
+                numberOfConnectedUEToBS[ue.connectedToBS][0] += 1
+            else:
+                numberOfConnectedUEToBS[ue.connectedToBS][1] += 1
+            max_UE_throughput_vector.append(max_UE_throughput)
+            real_UE_throughput_vector.append(0)
+        for i in range(len(self.ue)):
+            if (self.ue[i].inside):
+                real_UE_throughput_vector[i] = max_UE_throughput_vector[i] / numberOfConnectedUEToBS[self.ue[i].connectedToBS][0]
+                throughputSumPerBS[self.ue[i].connectedToBS][0] += real_UE_throughput_vector[i]
+            else:
+                real_UE_throughput_vector[i] = max_UE_throughput_vector[i] / numberOfConnectedUEToBS[self.ue[i].connectedToBS][1]
+                throughputSumPerBS[self.ue[i].connectedToBS][1] += real_UE_throughput_vector[i]
+        for i in range(len(self.bs)):
+            realAvgUEThroughputPerBs[i] = (throughputSumPerBS[i][0] / numberOfConnectedUEToBS[i][0] + throughputSumPerBS[i][1] / numberOfConnectedUEToBS[i][1]) / 2.0
+
+        return realAvgUEThroughputPerBs
+
     def returnRealUEThroughputVectorRR(self):
         numberOfConnectedUEToBS = []
         max_UE_throughput_vector = []
