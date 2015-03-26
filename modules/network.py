@@ -164,7 +164,11 @@ class CellularNetwork:
                 real_UE_throughput_vector[i] = max_UE_throughput_vector[i] / numberOfConnectedUEToBS[self.ue[i].connectedToBS][1]
                 throughputSumPerBS[self.ue[i].connectedToBS][1] += real_UE_throughput_vector[i]
         for i in range(len(self.bs)):
-            realAvgUEThroughputPerBs[i] = (throughputSumPerBS[i][0] / numberOfConnectedUEToBS[i][0] + throughputSumPerBS[i][1] / numberOfConnectedUEToBS[i][1]) / 2.0
+            if (numberOfConnectedUEToBS[i][0] > 0):
+                realAvgUEThroughputPerBs[i] += throughputSumPerBS[i][0] / numberOfConnectedUEToBS[i][0]
+            if (numberOfConnectedUEToBS[i][1] > 0):
+                realAvgUEThroughputPerBs[i] += throughputSumPerBS[i][1] / numberOfConnectedUEToBS[i][1]
+            realAvgUEThroughputPerBs[i] /= 2.0
 
         return realAvgUEThroughputPerBs
 
