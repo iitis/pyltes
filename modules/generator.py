@@ -290,8 +290,6 @@ class Generator:
             self.parent.bs[4*row_number + 3].x = 4 * W_hex + span
             self.parent.bs[4*row_number + 3].y = (1 + row_number) * H_hex - 0.33 * H_hex
 
-
-
     def loadDeploymentFromFile(self, filename):
         self.parent.constraintAreaMaxX = 3000
         self.parent.constraintAreaMaxY = 5000
@@ -312,6 +310,33 @@ class Generator:
             else:
                 bs.color = 1
             self.parent.bs.append(bs)
+
+    def loadNetworkAndObstaclesFromFile(self, filename):
+        network = csv.reader(open(filename), delimiter=';', quotechar='|')
+        for row in network:
+            if row[0] == "x_size_real":
+                self.parent.constraintAreaMaxX = int(row[1])*10
+            if row[0] == "y_size_real":
+                self.parent.constraintAreaMaxY = int(row[1])*10
+            if row[0] == "x_size_map":
+                x_size_map = int(row[1])
+            if row[0] == "y_size_map":
+                y_size_map = int(row[1])
+            if row[0] == "wall":
+                obstacle = []
+                obstacle.append(float(row[1])/x_size_map*self.parent.constraintAreaMaxX)
+                obstacle.append(float(row[2])/y_size_map*self.parent.constraintAreaMaxY)
+                obstacle.append(float(row[3])/x_size_map*self.parent.constraintAreaMaxX)
+                obstacle.append(float(row[4])/y_size_map*self.parent.constraintAreaMaxY)
+                obstacle.append(float(row[5]))
+                self.parent.obstacles.append(obstacle)
+            if row[0] == "bs":
+                bs = devices.BS()
+                bs.x = float(float(row[1])/x_size_map*self.parent.constraintAreaMaxX)
+                bs.y = float(float(row[2])/y_size_map*self.parent.constraintAreaMaxY)
+                bs.ID = int(row[3])
+                bs.turnedOn = True
+                self.parent.bs.append(bs)
 
     def insertUEingrid(self, numberOfDevices):
         numberOfNodesInRow = math.ceil(math.sqrt(numberOfDevices))

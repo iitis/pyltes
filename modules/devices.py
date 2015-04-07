@@ -145,13 +145,20 @@ class UE(NetworkDevice):
         else: # where=="out"
             receivedPower_connectedBS=self.calculateReceivedPower(BS_vector[self.connectedToBS].outsidePower, R)
 
-        a_y = BS_vector[self.connectedToBS].y-self.y
-        distance_bs_ue = R
-        ue_angle_rad = math.acos(a_y/distance_bs_ue)
+        a_x = 10
+        a_y = 0
+        b_x = self.x - BS_vector[self.connectedToBS].x
+        b_y = self.y - BS_vector[self.connectedToBS].y
+        aob = a_x * b_x + a_y * b_y
+        cos_alpha = aob / (R * 10)
+        ue_angle_rad = math.acos(cos_alpha)
         ue_angle = math.trunc(math.degrees(ue_angle_rad))
 
+        if self.y - BS_vector[self.connectedToBS].y < 0:
+            ue_angle = 359 - ue_angle
+
         if len(BS_vector[self.connectedToBS].characteristic) != 0:
-            receivedPower_connectedBS -= float(BS_vector[self.connectedToBS].characteristic[ue_angle])
+            receivedPower_connectedBS += float(BS_vector[self.connectedToBS].characteristic[ue_angle])
         if obstacleVector != None:
             receivedPower_connectedBS -= self.calculateWallLoss(BS_vector, obstacleVector)
 
@@ -197,12 +204,12 @@ class UE(NetworkDevice):
 
     def calculateSINR(self, BS_vector, obstacleVector = None):
 
-        SINRin = self.calculateSINRfor("in", BS_vector)
+        SINRin = self.calculateSINRfor("in", BS_vector, obstacleVector)
         if(SINRin > BS_vector[self.connectedToBS].mi):
             SINR=SINRin
             self.inside = True
         else:
-            SINR=self.calculateSINRfor("out", BS_vector)
+            SINR=self.calculateSINRfor("out", BS_vector, obstacleVector)
             self.inside = False
 
         return SINR

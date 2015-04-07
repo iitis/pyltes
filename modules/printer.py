@@ -385,7 +385,7 @@ class Printer:
         main_draw.savefig(filename+".png", format="png", dpi=300)
         plt.clf()
 
-    def drawSINRHeatmapAroundBS(self, filename, nodeNumber):
+    def drawSINRHeatmapAroundBS(self, filename, nodeNumber, drawingSize = 15):
         color_table = []
         for i in range(len(self.parent.bs)):
             color_table.append([255/(i+1), 255/(i+1), 255/(i+1)])
@@ -398,8 +398,8 @@ class Printer:
         # cm = plt.cm.get_cmap('binary')
         main_draw = plt.figure(1, figsize=(8, 8))
         ax = main_draw.add_subplot(111)
-        for x in range(0, round(self.parent.constraintAreaMaxX), 15):
-            for y in range(0, round(self.parent.constraintAreaMaxY), 15):
+        for x in range(0, round(self.parent.constraintAreaMaxX), drawingSize):
+            for y in range(0, round(self.parent.constraintAreaMaxY), drawingSize):
                 ue.x = x
                 ue.y = y
                 ue.connectedToBS = nodeNumber
@@ -416,6 +416,8 @@ class Printer:
         rect1 = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
         ax.add_patch(rect1)
         ax.axis('equal')
+        for obstacle in self.parent.obstacles:
+            ax.arrow(obstacle[0], obstacle[1], obstacle[2] - obstacle[0], obstacle[3] - obstacle[1])
         ax.plot(bs_x_locations, bs_y_locations, 'r^', color="black", markersize=4)
         ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
         ax.axis('off')
