@@ -2,6 +2,7 @@ __author__ = 'Mariusz'
 
 import math
 import csv
+import numpy as np
 
 class NetworkDevice:
     """Network device, needed for inheritance"""
@@ -14,6 +15,7 @@ class UE(NetworkDevice):
     def __init__(self):
         self.ID = 0
         self.connectedToBS = 0
+        self.inside = True
 
     def distanceToBS(self, BS):
         return math.sqrt((self.x-BS.x)**2+(self.y-BS.y)**2)
@@ -96,14 +98,15 @@ class UE(NetworkDevice):
             wallLoss = wallLoss + obstacle[4]
         return wallLoss
 
-    def calculateSINR(self, BS_vector, obstacleVector = None):
-        R = self.distanceToBS(BS_vector[self.connectedToBS])
-        lambda_val = 0.1427583
-        s = 15.8
+    def calculateReceivedPower(self, pSend, distance):
+        R = distance
+        lambda_val = 0.142758313333
         a = 4.0
         b = 0.0065
         c = 17.1
         d = 10.8
+        s = 9.6
+
         ht = 40
         hr = 1.5
         f = 2.1
@@ -120,63 +123,92 @@ class UE(NetworkDevice):
         else:
             PL = 20 * math.log10( (4*math.pi*R) / lambda_val ) + s
 
-        a_x = 10
-        a_y = 0
-        b_x = self.x - BS_vector[self.connectedToBS].x
-        b_y = self.y - BS_vector[self.connectedToBS].y
-        aob = a_x * b_x + a_y * b_y
-        cos_alpha = aob / (R * 10)
-        ue_angle_rad = math.acos(cos_alpha)
+        pRec = pSend - PL
+        if(pRec > pSend):
+            pRec = pSend
+        return pRec
+
+    def calculateNoise(self, bandwidth=20):
+        k = 1.3806488 * math.pow(10, -23)
+        T = 293.0
+        BW = bandwidth * 1000 * 1000
+        N = 10*math.log10(k*T) + 10*math.log10(BW)
+        return N
+
+    def calculateSINRfor(self, where, BS_vector, obstacleVector = None):
+        if (where not in ["in", "out"]):
+            raise Exception("wrong argument")
+
+        R = self.distanceToBS(BS_vector[self.connectedToBS])
+        if (where=="in"):
+            receivedPower_connectedBS=self.calculateReceivedPower(BS_vector[self.connectedToBS].insidePower, R)
+        else: # where=="out"
+            receivedPower_connectedBS=self.calculateReceivedPower(BS_vector[self.connectedToBS].outsidePower, R)
+
+        a_y = BS_vector[self.connectedToBS].y-self.y
+        distance_bs_ue = R
+        ue_angle_rad = math.acos(a_y/distance_bs_ue)
         ue_angle = math.trunc(math.degrees(ue_angle_rad))
 
-        if self.y - BS_vector[self.connectedToBS].y < 0:
-            ue_angle = 359 - ue_angle
-
-        receivedPower_connectedBS = BS_vector[self.connectedToBS].outsidePower - PL
         if len(BS_vector[self.connectedToBS].characteristic) != 0:
-           receivedPower_connectedBS = receivedPower_connectedBS + float(BS_vector[self.connectedToBS].characteristic[ue_angle])
+            receivedPower_connectedBS -= float(BS_vector[self.connectedToBS].characteristic[ue_angle])
         if obstacleVector != None:
-            receivedPower_connectedBS = receivedPower_connectedBS - self.calculateWallLoss(BS_vector, obstacleVector)
+            receivedPower_connectedBS -= self.calculateWallLoss(BS_vector, obstacleVector)
 
+        myColor = BS_vector[self.connectedToBS].color
         receivedPower_otherBS_mw = 0
         for bs_other in BS_vector:
             if self.connectedToBS == bs_other.ID:
                 continue
             if self.isSeenFromBS(bs_other) is False:
                 continue
-            R = self.distanceToBS(bs_other)
-            if R>R0p:
-                alpha = 20 * math.log10( (4*math.pi*R0p) / lambda_val )
-                PL = alpha + 10*gamma*math.log10( R/R0 ) + Xf + Xh + s
-            else:
-                PL = 20 * math.log10( (4*math.pi*R) / lambda_val ) + s
 
-            receivedPower_one = bs_other.outsidePower - PL
+            if (where=="in"):
+                sum_power_mw = 0
+                for i in range(1,4):
+                    if (myColor == i):
+                        continue
+                    if(bs_other.color == i):
+                        bs_other_power = bs_other.outsidePower
+                    else:
+                        bs_other_power = bs_other.insidePower
+
+                    sum_power_mw += math.pow(10, self.calculateReceivedPower(bs_other_power, self.distanceToBS(bs_other))/10)
+                receivedPower_one = 10*math.log10(sum_power_mw/2.0)
+            else: # where=="out"
+                if(bs_other.color == myColor):
+                    bs_other_power = bs_other.outsidePower
+                else:
+                    bs_other_power = bs_other.insidePower
+                receivedPower_one = self.calculateReceivedPower(bs_other_power, self.distanceToBS(bs_other))
+
             if obstacleVector != None:
                 receivedPower_one = receivedPower_one - self.calculateWallLoss(BS_vector, obstacleVector)
-            receivedPower_otherBS_mw = receivedPower_otherBS_mw + 10*math.pow(10, receivedPower_one/10)
-
-        k = 1.3806488 * math.pow(10, -23)
-        T = 293
-        BW = 20 * 1000 * 1000
-        N = 10*math.log10(k*T) + 10*math.log10(BW)
-
-        S = receivedPower_connectedBS
+            receivedPower_otherBS_mw = receivedPower_otherBS_mw + math.pow(10, receivedPower_one/10)
 
         I_mw = receivedPower_otherBS_mw
-        S_mw = 10*math.pow(10, S/10)
-        N_mw = 10*math.pow(10, N/10)
+        S_mw = math.pow(10, receivedPower_connectedBS/10)
+        N_mw = math.pow(10, self.calculateNoise()/10)
 
         SINR_mw = S_mw/(I_mw+N_mw)
-
         SINR = 10*math.log10(SINR_mw)
 
         return SINR
 
-    def calculateMaxThroughputOfTheNode(self, bs_vector):
-        R_c = 1666.3793
-        K = 3
+    def calculateSINR(self, BS_vector, obstacleVector = None):
 
+        SINRin = self.calculateSINRfor("in", BS_vector)
+        if(SINRin > BS_vector[self.connectedToBS].mi):
+            SINR=SINRin
+            self.inside = True
+        else:
+            SINR=self.calculateSINRfor("out", BS_vector)
+            self.inside = False
+
+        return SINR
+
+
+    def calculateMaxThroughputOfTheNode(self, bs_vector):
         r_i = 0.0
         M_i = 0.0
         sinr = self.calculateSINR(bs_vector)
@@ -229,12 +261,11 @@ class UE(NetworkDevice):
             r_i = 948/1024
             M_i = 64
 
-        distanceBS2UE = self.distanceToBS(bs_vector[self.connectedToBS])
-        if distanceBS2UE < R_c * bs_vector[self.connectedToBS].mi:
+        if self.inside:
             capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200*(2/3))/1)
             capacityForUE_s = capacityForUE_ms * 1000
         else:
-            capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200)*(1/3)/1)
+            capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200*(1/3))/1)
             capacityForUE_s = capacityForUE_ms * 1000
         return capacityForUE_s
 
@@ -245,7 +276,8 @@ class BS(NetworkDevice):
         self.insidePower = 0
         self.outsidePower = 0
         self.mi = 0
-        self.color = 0
+        self.Rc = 1666.3793
+        self.color = 1
         self.angle = 0
         self.turnedOn = False
         self.type = "MakroCell"

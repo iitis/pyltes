@@ -1,14 +1,14 @@
 __author__ = 'mslabicki'
 
 from PyGMO import *
-from modules.optimizationProblemsDef import maximalThroughputProblemRR
-from modules.optimizationProblemsDef import maximalThroughputProblemFS
-from modules.optimizationProblemsDef import medianThroughputProblemRR
-from modules.optimizationProblemsDef import medianThroughputProblemFS
-from modules.optimizationProblemsDef import minIqrProblemRR
-from modules.optimizationProblemsDef import minIqrProblemFS
-from modules.optimizationProblemsDef import maxTotalSINRProblem
-from modules.optimizationProblemsDef import maxMedianSINRProblem
+from modules.powerOptimizationProblemsDef import maximalThroughputProblemRR
+from modules.powerOptimizationProblemsDef import maximalThroughputProblemFS
+from modules.powerOptimizationProblemsDef import medianThroughputProblemRR
+from modules.powerOptimizationProblemsDef import medianThroughputProblemFS
+from modules.powerOptimizationProblemsDef import minIqrProblemRR
+from modules.powerOptimizationProblemsDef import minIqrProblemFS
+from modules.powerOptimizationProblemsDef import maxTotalSINRProblem
+from modules.powerOptimizationProblemsDef import maxMedianSINRProblem
 
 import copy
 

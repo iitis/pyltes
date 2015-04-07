@@ -277,7 +277,8 @@ class Printer:
         thr_MBit = [x / (1024*1024) for x in thr_vector]
         plt.hist(thr_MBit, bins=np.arange(0, (25 + 1), 0.25))
         plt.xlim(0, 25)
-        plt.savefig(filename, format="pdf", dpi=300)
+        # plt.savefig(filename, format="pdf", dpi=300)
+        plt.savefig(filename+".png", format="png", dpi=300)
         plt.clf()
 
     def drawHistogramOfSetPowers(self, filename):
@@ -286,7 +287,8 @@ class Printer:
             power_vector.append(bs.outsidePower)
         plt.hist(power_vector, bins=np.arange(self.parent.minFemtoTxPower, self.parent.maxTxPower + 1, 1))
         plt.xlim(0, 100)
-        plt.savefig(filename, format="pdf", dpi=300)
+        # plt.savefig(filename, format="pdf", dpi=300)
+        plt.savefig(filename+".png", format="png", dpi=300)
         plt.clf()
 
     def drawHeatmapWithStuff(self, filename):
@@ -336,7 +338,8 @@ class Printer:
         ax.plot(bs_x_locations, bs_y_locations, 'r^', ue_x_locations, ue_y_locations, 'b*', color="black", markersize=10)
         ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
         ax.axis('off')
-        main_draw.savefig(filename, format="pdf", dpi=300)
+        # main_draw.savefig(filename, format="pdf", dpi=300)
+        main_draw.savefig(filename+".png", format="png", dpi=300)
         plt.clf()
 
     def drawSINRHeatmap(self, filename, nodenumber):
@@ -347,13 +350,13 @@ class Printer:
         x_list = []
         y_list = []
         color_list = []
-        #cm = plt.cm.get_cmap('Spectral')
-        cm = plt.cm.get_cmap('Paired')
-        #cm = plt.cm.get_cmap('binary')
+        cm = plt.cm.get_cmap('Spectral')
+        #cm = plt.cm.get_cmap('Paired')
+        # cm = plt.cm.get_cmap('binary')
         main_draw = plt.figure(1, figsize=(8, 8))
         ax = main_draw.add_subplot(111)
-        for x in range(0, round(self.parent.constraintAreaMaxX), 5):
-            for y in range(0, round(self.parent.constraintAreaMaxY), 5):
+        for x in range(0, round(self.parent.constraintAreaMaxX), 15):
+            for y in range(0, round(self.parent.constraintAreaMaxY), 15):
                 ue.x = x
                 ue.y = y
                 ue.connectedToBS = nodenumber
@@ -361,7 +364,7 @@ class Printer:
                 x_list.append(x)
                 y_list.append(y)
                 color_list.append(SINR)
-        scatter = ax.scatter(x_list, y_list, c=color_list, cmap=cm, s=5, marker = "s", edgecolors='None')
+        scatter = ax.scatter(x_list, y_list, c=color_list, cmap=cm, s=15, marker = "s", edgecolors='None')
         bs_x_locations = []
         bs_y_locations = []
         for bs in self.parent.bs:
@@ -378,7 +381,7 @@ class Printer:
         #cbar.set_clim(-60, 50)
         #cbar.ax.set_yticklabels(['0','1','2','>3'])
         #cbar.set_label('# of contacts', rotation=270)
-        main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
+        # main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
         main_draw.savefig(filename+".png", format="png", dpi=300)
         plt.clf()
 
@@ -390,13 +393,13 @@ class Printer:
         x_list = []
         y_list = []
         color_list = []
-        #cm = plt.cm.get_cmap('Spectral')
-        cm = plt.cm.get_cmap('Paired')
-        #cm = plt.cm.get_cmap('binary')
+        cm = plt.cm.get_cmap('Spectral')
+        #cm = plt.cm.get_cmap('Paired')
+        # cm = plt.cm.get_cmap('binary')
         main_draw = plt.figure(1, figsize=(8, 8))
         ax = main_draw.add_subplot(111)
-        for x in range(0, round(self.parent.constraintAreaMaxX), 5):
-            for y in range(0, round(self.parent.constraintAreaMaxY), 5):
+        for x in range(0, round(self.parent.constraintAreaMaxX), 15):
+            for y in range(0, round(self.parent.constraintAreaMaxY), 15):
                 ue.x = x
                 ue.y = y
                 ue.connectedToBS = nodeNumber
@@ -404,7 +407,7 @@ class Printer:
                 x_list.append(x)
                 y_list.append(y)
                 color_list.append(SINR)
-        scatter = ax.scatter(x_list, y_list, c=color_list, cmap=cm, s=4, marker = "s", edgecolors='None')
+        scatter = ax.scatter(x_list, y_list, c=color_list, cmap=cm, s=15, marker = "s", edgecolors='None')
         bs_x_locations = []
         bs_y_locations = []
         for bs in self.parent.bs:
@@ -413,8 +416,6 @@ class Printer:
         rect1 = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
         ax.add_patch(rect1)
         ax.axis('equal')
-        for obstacle in self.parent.obstacles:
-            ax.arrow(obstacle[0], obstacle[1], obstacle[2] - obstacle[0], obstacle[3] - obstacle[1])
         ax.plot(bs_x_locations, bs_y_locations, 'r^', color="black", markersize=4)
         ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
         ax.axis('off')
@@ -423,7 +424,7 @@ class Printer:
         #cbar.set_clim(-60, 50)
         #cbar.ax.set_yticklabels(['0','1','2','>3'])
         #cbar.set_label('# of contacts', rotation=270)
-        #main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
+        # main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
         main_draw.savefig(filename+".png", format="png", dpi=300)
         plt.clf()
 
@@ -435,9 +436,9 @@ class Printer:
         x_list = []
         y_list = []
         color_list = []
-        #cm = plt.cm.get_cmap('Spectral')
-        #cm = plt.cm.get_cmap('Paired')
-        cm = plt.cm.get_cmap('binary')
+        cm = plt.cm.get_cmap('Spectral')
+        # cm = plt.cm.get_cmap('Paired')
+        # cm = plt.cm.get_cmap('binary')
         #cm = plt.cm.get_cmap('prism')
         main_draw = plt.figure(1, figsize=(8, 8))
         ax = main_draw.add_subplot(111)
@@ -465,7 +466,7 @@ class Printer:
 
         cbar = plt.colorbar(scatter)
         #cbar.set_clim(0, 20)
-        main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
+        # main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
         main_draw.savefig(filename+".png", format="png", dpi=300)
         plt.clf()
 
@@ -540,7 +541,7 @@ class Printer:
                 ue.y = y
                 ue.connectToNearestBS(self.parent.bs)
                 if ue.connectedToBS == nodenumber:
-                    if ue.distanceToBS(self.parent.bs[nodenumber]) < self.parent.bs[nodenumber].mi * 1666.3793:
+                    if ue.distanceToBS(self.parent.bs[nodenumber]) < self.parent.bs[nodenumber].mi * self.parent.bs[nodenumber].Rc:
                         x_list_internal.append(x)
                         y_list_internal.append(y)
                     else:
@@ -554,6 +555,143 @@ class Printer:
         ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
         ax.axis('off')
 
-        main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
+        # main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
+        main_draw.savefig(filename+".png", format="png", dpi=300)
+        plt.clf()
+
+    def drawNearestBsSINRHeatmap(self, filename):
+        color_table = []
+        for i in range(len(self.parent.bs)):
+            color_table.append([255/(i+1), 255/(i+1), 255/(i+1)])
+        ue = devices.UE()
+        x_list = []
+        y_list = []
+        color_list = []
+        in_x_list = []
+        in_y_list = []
+        out_x_list = []
+        out_y_list = []
+        cm = plt.cm.get_cmap('Spectral')
+        main_draw = plt.figure(1, figsize=(8, 8))
+        ax = main_draw.add_subplot(111)
+
+        for x in range(0, round(self.parent.constraintAreaMaxX), 15):
+            for y in range(0, round(self.parent.constraintAreaMaxY), 15):
+                ue.x = x
+                ue.y = y
+                ue.connectToNearestBS(self.parent.bs)
+                SINR = ue.calculateSINR(self.parent.bs)
+                x_list.append(x)
+                y_list.append(y)
+                color_list.append(SINR)
+                if (ue.inside==True):
+                    in_x_list.append(x)
+                    in_y_list.append(y)
+                if (ue.inside==False):
+                    out_x_list.append(x)
+                    out_y_list.append(y)
+        scatter = ax.scatter(x_list, y_list, c=color_list, cmap=cm, s=15, marker="s", edgecolors='None')
+
+        bs_x_locations = []
+        bs_y_locations = []
+        for bs in self.parent.bs:
+            bs_x_locations.append(bs.x)
+            bs_y_locations.append(bs.y)
+        rect1 = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
+        ax.add_patch(rect1)
+        ax.axis('equal')
+        ax.plot(bs_x_locations, bs_y_locations, 'r^', color="black", markersize=4)
+        ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
+        ax.axis('off')
+
+        cbar = plt.colorbar(scatter)
+        #cbar.set_clim(-60, 50)
+        #cbar.ax.set_yticklabels(['0','1','2','>3'])
+        #cbar.set_label('# of contacts', rotation=270)
+        # main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
+        main_draw.savefig(filename+".png", format="png", dpi=300)
+        plt.clf()
+
+        # cm = plt.cm.get_cmap('brg')
+        main_draw = plt.figure(1, figsize=(8, 8))
+        ax = main_draw.add_subplot(111)
+        # ax.scatter(x_list, y_list, c=inout_list, cmap=cm, s=15, marker="s", edgecolors='None')
+
+        ax.scatter(in_x_list, in_y_list, s=1, color="red")
+        ax.scatter(out_x_list, out_y_list, s=1, color="blue")
+
+        rect1 = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
+        ax.add_patch(rect1)
+        ax.axis('equal')
+        ax.plot(bs_x_locations, bs_y_locations, 'r^', color="black", markersize=4)
+        ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
+        ax.axis('off')
+        main_draw.savefig("helper_"+filename+".png", format="png", dpi=300)
+        plt.clf()
+
+
+    def drawStrongestBsSINRHeatmap(self, filename):
+        color_table = []
+        for i in range(len(self.parent.bs)):
+            color_table.append([255/(i+1), 255/(i+1), 255/(i+1)])
+        ue = devices.UE()
+        x_list = []
+        y_list = []
+        color_list = []
+        cm = plt.cm.get_cmap('Spectral')
+        #cm = plt.cm.get_cmap('Paired')
+        # cm = plt.cm.get_cmap('binary')
+        main_draw = plt.figure(1, figsize=(8, 8))
+        ax = main_draw.add_subplot(111)
+        for x in range(0, round(self.parent.constraintAreaMaxX), 15):
+            for y in range(0, round(self.parent.constraintAreaMaxY), 15):
+                ue.x = x
+                ue.y = y
+                ue.connectToTheBestBS(self.parent.bs)
+                SINR = ue.calculateSINR(self.parent.bs)
+                x_list.append(x)
+                y_list.append(y)
+                color_list.append(SINR)
+        scatter = ax.scatter(x_list, y_list, c=color_list, cmap=cm, s=15, marker = "s", edgecolors='None')
+        bs_x_locations = []
+        bs_y_locations = []
+        for bs in self.parent.bs:
+            bs_x_locations.append(bs.x)
+            bs_y_locations.append(bs.y)
+        rect1 = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
+        ax.add_patch(rect1)
+        ax.axis('equal')
+        ax.plot(bs_x_locations, bs_y_locations, 'r^', color="black", markersize=4)
+        ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
+        ax.axis('off')
+
+        cbar = plt.colorbar(scatter)
+        #cbar.set_clim(-60, 50)
+        #cbar.ax.set_yticklabels(['0','1','2','>3'])
+        #cbar.set_label('# of contacts', rotation=270)
+        # main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
+        main_draw.savefig(filename+".png", format="png", dpi=300)
+        plt.clf()
+
+    def drawNetworkWithColors(self, filename):
+        main_draw = plt.figure(1, figsize=(8, 8))
+        ax = main_draw.add_subplot(111)
+        rect = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
+        ax.add_patch(rect)
+        for bs in self.parent.bs:
+            ax.scatter(bs.x, bs.y, s=13, color="black")
+            circle = plt.Circle([bs.x, bs.y], bs.Rc, fill=False, color="grey", linewidth=0.1)
+            ax.add_patch(circle)
+            if (bs.color==1):
+                c="red"
+            elif (bs.color==2):
+                c="green"
+            else:
+                c="blue"
+            circle = plt.Circle([bs.x, bs.y], bs.Rc*0.5, fill=False, color=c, linewidth=3)
+            ax.add_patch(circle)
+        ax.axis('equal')
+        ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
+        ax.axis('off')
         main_draw.savefig(filename+".png", format="png", dpi=300)
         plt.clf()
