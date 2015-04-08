@@ -1,4 +1,4 @@
-__author__ = 'Mariusz'
+__author__ = 'Mariusz Słabicki, Konrad Połys'
 
 import math
 import csv

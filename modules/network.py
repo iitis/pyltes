@@ -194,14 +194,43 @@ class CellularNetwork:
         return real_UE_throughput_vector
 
     def returnRealUEThroughputVectorFS(self):
-        numberOfConnectedUEToBS = []
         sumOfInvThroughputPerBS = []
         real_UE_throughput_vector = []
         for i in range(len(self.bs)):
-            numberOfConnectedUEToBS.append(0)
+            sumOfInvThroughputPerBS.append([0,0])
+        for ue in self.ue:
+            ue_throughput = ue.calculateMaxThroughputOfTheNode(self.bs)
+            if ue_throughput == 0:
+                if (ue.inside):
+                    sumOfInvThroughputPerBS[ue.connectedToBS][0] += 1
+                else:
+                    sumOfInvThroughputPerBS[ue.connectedToBS][1] += 1
+            else:
+                if (ue.inside):
+                    sumOfInvThroughputPerBS[ue.connectedToBS][0] += 1.0 / ue_throughput
+                else:
+                    sumOfInvThroughputPerBS[ue.connectedToBS][1] += 1.0 / ue_throughput
+        for ue in self.ue:
+            ue_throughput = ue.calculateMaxThroughputOfTheNode(self.bs)
+            if ue_throughput == 0:
+                if (ue.inside):
+                    weight = 1.0 / sumOfInvThroughputPerBS[ue.connectedToBS][0]
+                else:
+                    weight = 1.0 / sumOfInvThroughputPerBS[ue.connectedToBS][1]
+            else:
+                if (ue.inside):
+                    weight = ((1.0 / ue_throughput) / sumOfInvThroughputPerBS[ue.connectedToBS][0])
+                else:
+                    weight = ((1.0 / ue_throughput) / sumOfInvThroughputPerBS[ue.connectedToBS][1])
+            real_UE_throughput_vector.append(weight * ue_throughput)
+        return real_UE_throughput_vector
+
+    def returnRealUEThroughputVectorFS2in1(self):
+        sumOfInvThroughputPerBS = []
+        real_UE_throughput_vector = []
+        for i in range(len(self.bs)):
             sumOfInvThroughputPerBS.append(0)
         for ue in self.ue:
-            numberOfConnectedUEToBS[ue.connectedToBS] += 1
             ue_throughput = ue.calculateMaxThroughputOfTheNode(self.bs)
             if ue_throughput == 0:
                 sumOfInvThroughputPerBS[ue.connectedToBS] += 1
@@ -214,6 +243,7 @@ class CellularNetwork:
             else:
                 weight = ((1.0 / ue_throughput) / sumOfInvThroughputPerBS[ue.connectedToBS])
             real_UE_throughput_vector.append(weight * ue_throughput)
+
         return real_UE_throughput_vector
 
     def returnNumberOfUEperBS(self):
