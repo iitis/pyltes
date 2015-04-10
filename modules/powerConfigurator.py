@@ -12,18 +12,16 @@ from modules.powerOptimizationProblemsDef import maxMedianSINRProblem
 
 import copy
 
-numberOfThreads = 11
-
 class pygmoPowerConfigurator:
     def __init__(self,parent):
         self.parent = parent
 
-    def findPowersMaxThrRR(self):
+    def findPowersMaxThrRR(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
         prob = maximalThroughputProblemRR(dim=len(self.parent.bs))
         prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=100)
-        archi = archipelago(algo, prob, numberOfThreads, 10)
-        archi.evolve(10)
+        algo = algorithm.sga(gen=sgaGenerations)
+        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
+        archi.evolve(evolveTimes)
         archi.join()
         theBestCostF = 0
         islandNumber = -1
@@ -36,12 +34,12 @@ class pygmoPowerConfigurator:
         for i in range(len(self.parent.bs)):
             self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
 
-    def findPowersMaxThrFS(self):
+    def findPowersMaxThrFS(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
         prob = maximalThroughputProblemFS(dim=len(self.parent.bs))
         prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=100)
-        archi = archipelago(algo, prob, numberOfThreads, 10)
-        archi.evolve(10)
+        algo = algorithm.sga(gen=sgaGenerations)
+        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
+        archi.evolve(evolveTimes)
         archi.join()
         theBestCostF = 0
         islandNumber = -1
@@ -54,12 +52,12 @@ class pygmoPowerConfigurator:
         for i in range(len(self.parent.bs)):
             self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
 
-    def findPowersMedianThrRR(self):
+    def findPowersMedianThrRR(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
         prob = medianThroughputProblemRR(dim=len(self.parent.bs))
         prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=100)
-        archi = archipelago(algo, prob, numberOfThreads, 10)
-        archi.evolve(10)
+        algo = algorithm.sga(gen=sgaGenerations)
+        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
+        archi.evolve(evolveTimes)
         archi.join()
         theBestCostF = 0
         islandNumber = -1
@@ -72,12 +70,12 @@ class pygmoPowerConfigurator:
         for i in range(len(self.parent.bs)):
             self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
 
-    def findPowersMedianThrFS(self):
+    def findPowersMedianThrFS(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
         prob = medianThroughputProblemFS(dim=len(self.parent.bs))
         prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=100)
-        archi = archipelago(algo, prob, numberOfThreads, 10)
-        archi.evolve(10)
+        algo = algorithm.sga(gen=sgaGenerations)
+        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
+        archi.evolve(evolveTimes)
         archi.join()
         theBestCostF = 0
         islandNumber = -1
@@ -90,12 +88,12 @@ class pygmoPowerConfigurator:
         for i in range(len(self.parent.bs)):
             self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
 
-    def findMinIqrThrRR(self):
+    def findMinIqrThrRR(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
         prob = minIqrProblemRR(dim=len(self.parent.bs))
         prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=100)
-        archi = archipelago(algo, prob, numberOfThreads, 10)
-        archi.evolve(10)
+        algo = algorithm.sga(gen=sgaGenerations)
+        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
+        archi.evolve(evolveTimes)
         archi.join()
         theBestCostF = 0
         islandNumber = -1
@@ -108,12 +106,12 @@ class pygmoPowerConfigurator:
         for i in range(len(self.parent.bs)):
             self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
 
-    def findMinIqrThrFS(self):
+    def findMinIqrThrFS(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
         prob = minIqrProblemFS(dim=len(self.parent.bs))
         prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=100)
-        archi = archipelago(algo, prob, numberOfThreads, 10)
-        archi.evolve(10)
+        algo = algorithm.sga(gen=sgaGenerations)
+        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
+        archi.evolve(evolveTimes)
         archi.join()
         theBestCostF = 0
         islandNumber = -1
@@ -126,12 +124,12 @@ class pygmoPowerConfigurator:
         for i in range(len(self.parent.bs)):
             self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
 
-    def findPowersMaxTotalSINR(self):
+    def findPowersMaxTotalSINR(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
         prob = maxTotalSINRProblem(dim=len(self.parent.bs))
         prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=100)
-        archi = archipelago(algo, prob, numberOfThreads, 10)
-        archi.evolve(10)
+        algo = algorithm.sga(gen=sgaGenerations)
+        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
+        archi.evolve(evolveTimes)
         archi.join()
         theBestCostF = 0
         islandNumber = -1
@@ -144,12 +142,12 @@ class pygmoPowerConfigurator:
         for i in range(len(self.parent.bs)):
             self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
 
-    def findPowersMaxMedianSINR(self):
+    def findPowersMaxMedianSINR(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
         prob = maxMedianSINRProblem(dim=len(self.parent.bs))
         prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=100)
-        archi = archipelago(algo, prob, numberOfThreads, 10)
-        archi.evolve(10)
+        algo = algorithm.sga(gen=sgaGenerations)
+        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
+        archi.evolve(evolveTimes)
         archi.join()
         theBestCostF = 0
         islandNumber = -1
