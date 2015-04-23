@@ -565,7 +565,7 @@ class Printer:
         color_table = []
         for i in range(len(self.parent.bs)):
             color_table.append([255/(i+1), 255/(i+1), 255/(i+1)])
-        ue = devices.UE()
+        ue = devices.UE(self.parent)
         x_list = []
         y_list = []
         color_list = []
@@ -631,6 +631,7 @@ class Printer:
         main_draw.savefig("helper_"+filename+".png", format="png", dpi=300)
         plt.clf()
 
+    
 
     def drawStrongestBsSINRHeatmap(self, filename):
         color_table = []
@@ -681,17 +682,47 @@ class Printer:
         rect = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
         ax.add_patch(rect)
         for bs in self.parent.bs:
-            ax.scatter(bs.x, bs.y, s=13, color="black")
-            circle = plt.Circle([bs.x, bs.y], bs.Rc, fill=False, color="grey", linewidth=0.1)
-            ax.add_patch(circle)
+            # ax.scatter(bs.x, bs.y, s=13, color="black")
             if (bs.color==1):
                 c="red"
             elif (bs.color==2):
                 c="green"
             else:
                 c="blue"
-            circle = plt.Circle([bs.x, bs.y], bs.Rc*0.5, fill=False, color=c, linewidth=3)
+            circle = plt.Circle([bs.x, bs.y], bs.Rc*0.5, fill=c, color=c, linewidth=3)
             ax.add_patch(circle)
+
+            circle = plt.Circle([bs.x, bs.y], bs.Rc, fill=False, color="grey", linewidth=0.1)
+            ax.add_patch(circle)
+
+            circle = plt.Circle([bs.x, bs.y], bs.Rc*0.05, fill="black", color="black", linewidth=0.1)
+            ax.add_patch(circle)
+            # ax.scatter(bs.x, bs.y, s=13, color="black")
+        ax.axis('equal')
+        ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
+        ax.axis('off')
+        main_draw.savefig(filename+".png", format="png", dpi=300)
+        plt.clf()
+
+    def drawNetworkColorsMap(self, filename):
+        main_draw = plt.figure(1, figsize=(8, 8))
+        ax = main_draw.add_subplot(111)
+        rect = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
+        ax.add_patch(rect)
+        ue = devices.UE()
+        for x in range(0, round(self.parent.constraintAreaMaxX), 30):
+            for y in range(0, round(self.parent.constraintAreaMaxY), 30):
+                ue.x = x
+                ue.y = y
+                ue.connectToTheBestBS(self.parent.bs)
+                bsColor = self.parent.bs[ue.connectedToBS].color
+                if (bsColor==1):
+                    c="red"
+                elif (bsColor==2):
+                    c="green"
+                else:
+                    c="blue"
+                ax.scatter(ue.x, ue.y, s=10, color=c)
         ax.axis('equal')
         ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
         ax.axis('off')
