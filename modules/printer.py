@@ -577,8 +577,8 @@ class Printer:
         main_draw = plt.figure(1, figsize=(8, 8))
         ax = main_draw.add_subplot(111)
 
-        for x in range(0, round(self.parent.constraintAreaMaxX), 15):
-            for y in range(0, round(self.parent.constraintAreaMaxY), 15):
+        for x in range(0, round(self.parent.constraintAreaMaxX), 50):
+            for y in range(0, round(self.parent.constraintAreaMaxY), 50):
                 ue.x = x
                 ue.y = y
                 ue.connectToNearestBS(self.parent.bs)
@@ -631,7 +631,76 @@ class Printer:
         main_draw.savefig("helper_"+filename+".png", format="png", dpi=300)
         plt.clf()
 
-    
+    def drawTheBestBsSINRHeatmap(self, filename):
+        color_table = []
+        for i in range(len(self.parent.bs)):
+            color_table.append([255/(i+1), 255/(i+1), 255/(i+1)])
+        ue = devices.UE(self.parent)
+        x_list = []
+        y_list = []
+        color_list = []
+        in_x_list = []
+        in_y_list = []
+        out_x_list = []
+        out_y_list = []
+        cm = plt.cm.get_cmap('Spectral')
+        main_draw = plt.figure(1, figsize=(8, 8))
+        ax = main_draw.add_subplot(111)
+
+        for x in range(0, round(self.parent.constraintAreaMaxX), 50):
+            for y in range(0, round(self.parent.constraintAreaMaxY), 50):
+                ue.x = x
+                ue.y = y
+                ue.connectToTheBestBS(self.parent.bs)
+                SINR = ue.calculateSINR(self.parent.bs)
+                x_list.append(x)
+                y_list.append(y)
+                color_list.append(SINR)
+                if (ue.inside==True):
+                    in_x_list.append(x)
+                    in_y_list.append(y)
+                if (ue.inside==False):
+                    out_x_list.append(x)
+                    out_y_list.append(y)
+        scatter = ax.scatter(x_list, y_list, c=color_list, cmap=cm, s=15, marker="s", edgecolors='None')
+
+        bs_x_locations = []
+        bs_y_locations = []
+        for bs in self.parent.bs:
+            bs_x_locations.append(bs.x)
+            bs_y_locations.append(bs.y)
+        rect1 = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
+        ax.add_patch(rect1)
+        ax.axis('equal')
+        ax.plot(bs_x_locations, bs_y_locations, 'r^', color="black", markersize=4)
+        ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
+        ax.axis('off')
+
+        cbar = plt.colorbar(scatter)
+        #cbar.set_clim(-60, 50)
+        #cbar.ax.set_yticklabels(['0','1','2','>3'])
+        #cbar.set_label('# of contacts', rotation=270)
+        # main_draw.savefig(filename+".pdf", format="pdf", dpi=300)
+        main_draw.savefig(filename+".png", format="png", dpi=300)
+        plt.clf()
+
+        # cm = plt.cm.get_cmap('brg')
+        main_draw = plt.figure(1, figsize=(8, 8))
+        ax = main_draw.add_subplot(111)
+        # ax.scatter(x_list, y_list, c=inout_list, cmap=cm, s=15, marker="s", edgecolors='None')
+
+        ax.scatter(in_x_list, in_y_list, s=1, color="red")
+        ax.scatter(out_x_list, out_y_list, s=1, color="blue")
+
+        rect1 = plt.Rectangle((0,0), self.parent.constraintAreaMaxX, self.parent.constraintAreaMaxY, color='black', fill=False)
+        ax.add_patch(rect1)
+        ax.axis('equal')
+        ax.plot(bs_x_locations, bs_y_locations, 'r^', color="black", markersize=4)
+        ax.axis([0, self.parent.constraintAreaMaxX, 0, self.parent.constraintAreaMaxY])
+        ax.axis('off')
+        main_draw.savefig("helper_"+filename+".png", format="png", dpi=300)
+        plt.clf()
+
 
     def drawStrongestBsSINRHeatmap(self, filename):
         color_table = []
