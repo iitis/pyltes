@@ -282,7 +282,7 @@ class UE(NetworkDevice):
                 capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200*(1/3))/1)
                 capacityForUE_s = capacityForUE_ms * 1000
         else:
-            capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200)/1)
+            capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200)/1) #moze razy trzy
             capacityForUE_s = capacityForUE_ms * 1000
         return capacityForUE_s
 
