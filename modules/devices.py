@@ -12,10 +12,11 @@ class NetworkDevice:
 
 class UE(NetworkDevice):
     """UE"""
-    def __init__(self):
+    def __init__(self, parent):
+        self.parent = parent
         self.ID = 0
         self.connectedToBS = 0
-        self.inside = True
+        self.inside = False
 
     def distanceToBS(self, BS):
         return math.sqrt((self.x-BS.x)**2+(self.y-BS.y)**2)
@@ -170,7 +171,7 @@ class UE(NetworkDevice):
             if self.isSeenFromBS(bs_other) is False:
                 continue
 
-            if (where=="in"):
+            if (where=="in" and self.parent.SFRenabled):
                 sum_power_mw = 0
                 for i in range(1,4):
                     if (myColor == i):
@@ -183,11 +184,14 @@ class UE(NetworkDevice):
                     sum_power_mw += math.pow(10, self.calculateReceivedPower(bs_other_power, self.distanceToBS(bs_other))/10)
                 receivedPower_one = 10*math.log10(sum_power_mw/2.0)
             else: # where=="out"
-                if(bs_other.color == myColor):
-                    bs_other_power = bs_other.outsidePower
+                if (self.parent.SFRenabled):
+                    if(bs_other.color == myColor):
+                        bs_other_power = bs_other.outsidePower
+                    else:
+                        bs_other_power = bs_other.insidePower
+                    receivedPower_one = self.calculateReceivedPower(bs_other_power, self.distanceToBS(bs_other))
                 else:
-                    bs_other_power = bs_other.insidePower
-                receivedPower_one = self.calculateReceivedPower(bs_other_power, self.distanceToBS(bs_other))
+                    receivedPower_one = self.calculateReceivedPower(bs_other.outsidePower, self.distanceToBS(bs_other))
 
             if obstacleVector != None:
                 receivedPower_one = receivedPower_one - self.calculateWallLoss(BS_vector, obstacleVector)
@@ -203,15 +207,17 @@ class UE(NetworkDevice):
         return SINR
 
     def calculateSINR(self, BS_vector, obstacleVector = None):
-
-        SINRin = self.calculateSINRfor("in", BS_vector, obstacleVector)
-        if(SINRin > BS_vector[self.connectedToBS].mi):
-            SINR=SINRin
-            self.inside = True
+        if self.parent.SFRenabled:
+            SINRin = self.calculateSINRfor("in", BS_vector, obstacleVector)
+            if(SINRin > BS_vector[self.connectedToBS].mi):
+                SINR=SINRin
+                self.inside = True
+            else:
+                SINR=self.calculateSINRfor("out", BS_vector, obstacleVector)
+                self.inside = False
         else:
             SINR=self.calculateSINRfor("out", BS_vector, obstacleVector)
             self.inside = False
-
         return SINR
 
 
@@ -268,11 +274,15 @@ class UE(NetworkDevice):
             r_i = 948/1024
             M_i = 64
 
-        if self.inside:
-            capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200*(2/3))/1)
-            capacityForUE_s = capacityForUE_ms * 1000
+        if (self.parent.SFRenabled):
+            if self.inside:
+                capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200*(2/3))/1)
+                capacityForUE_s = capacityForUE_ms * 1000
+            else:
+                capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200*(1/3))/1)
+                capacityForUE_s = capacityForUE_ms * 1000
         else:
-            capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200*(1/3))/1)
+            capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200)/1) #moze razy trzy
             capacityForUE_s = capacityForUE_ms * 1000
         return capacityForUE_s
 

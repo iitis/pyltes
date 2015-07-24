@@ -15,6 +15,7 @@ from statsmodels.distributions.empirical_distribution import ECDF
 class CellularNetwork:
     """Class describing cellular network"""
     def __init__(self):
+        self.SFRenabled = False
         self.ue = []
         self.bs = []
         self.obstacles = []
@@ -61,19 +62,31 @@ class CellularNetwork:
         if (insidePowerLevel==None):
             insidePowerLevel = outsidePowerLevel - 3
         for bs in self.bs:
-            bs.insidePower = insidePowerLevel
-            bs.outsidePower = outsidePowerLevel
+            if self.SFRenabled:
+                bs.insidePower = insidePowerLevel
+                bs.outsidePower = outsidePowerLevel
+            else:
+                bs.insidePower = outsidePowerLevel
+                bs.outsidePower = outsidePowerLevel
 
     def setRandomPowerInAllBS(self, powerLevel):
         for bs in self.bs:
-            bs.insidePower = random.randint(0, powerLevel) - 3
-            bs.outsidePower = bs.insidePower + 3
+            if self.SFRenabled:
+                bs.insidePower = random.randint(0, powerLevel) - 3
+                bs.outsidePower = bs.insidePower + 3
+            else:
+                bs.outsidePower = random.randint(0, powerLevel)
+                bs.insidePower = bs.outsidePower
 
     def setSmallestPossiblePowerInAllBS(self):
         for bs in self.bs:
             if bs.type == "MakroCell":
-                bs.insidePower = self.minTxPower - 3
-                bs.outsidePower = self.minTxPower
+                if self.SFRenabled:
+                    bs.insidePower = self.minTxPower - 3
+                    bs.outsidePower = self.minTxPower
+                else:
+                    bs.insidePower = self.minTxPower
+                    bs.outsidePower = self.minTxPower
             if bs.type == "FemtoCell":
                 bs.power == self.minFemtoTxPower
 
@@ -138,7 +151,7 @@ class CellularNetwork:
             if ecdf(value) >= 0.5:
                 return -1*value
 
-    def returnRealAvgUEThroughputPerBsRR(self):
+    def returnRealAvgUEThroughputPerBsRR(self): #do not use it. delete it
         numberOfConnectedUEToBS = []
         throughputSumPerBS = []
         max_UE_throughput_vector = []
@@ -164,11 +177,14 @@ class CellularNetwork:
                 real_UE_throughput_vector[i] = max_UE_throughput_vector[i] / numberOfConnectedUEToBS[self.ue[i].connectedToBS][1]
                 throughputSumPerBS[self.ue[i].connectedToBS][1] += real_UE_throughput_vector[i]
         for i in range(len(self.bs)):
+            div=0.0
             if (numberOfConnectedUEToBS[i][0] > 0):
+                div += 1.0
                 realAvgUEThroughputPerBs[i] += throughputSumPerBS[i][0] / numberOfConnectedUEToBS[i][0]
             if (numberOfConnectedUEToBS[i][1] > 0):
+                div += 1.0
                 realAvgUEThroughputPerBs[i] += throughputSumPerBS[i][1] / numberOfConnectedUEToBS[i][1]
-            realAvgUEThroughputPerBs[i] /= 2.0
+            realAvgUEThroughputPerBs[i] /= div
 
         return realAvgUEThroughputPerBs
 

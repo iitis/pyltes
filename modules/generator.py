@@ -345,7 +345,7 @@ class Generator:
         y_step = int(self.parent.constraintAreaMaxY)/numberOfNodesInRow
         for x_pos in range(0, numberOfNodesInRow):
             for y_pos in range(0, numberOfNodesInRow):
-                ue = devices.UE()
+                ue = devices.UE(self.parent)
                 ue.ID = number
                 ue.x = 0.5*x_step + (x_pos*x_step)
                 ue.y = 0.5*y_step + (y_pos*y_step)
@@ -355,7 +355,7 @@ class Generator:
     def insertUErandomly(self, numberOfDevices):
         number = 0
         for i in range(0, numberOfDevices):
-            ue = devices.UE()
+            ue = devices.UE(self.parent)
             ue.ID = number
             ue.x = random.uniform(0, self.parent.constraintAreaMaxX)
             ue.y = random.uniform(0, self.parent.constraintAreaMaxY)
