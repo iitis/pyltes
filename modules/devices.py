@@ -1,4 +1,4 @@
-__author__ = 'Mariusz Słabicki, Konrad Połys'
+__author__ = 'Mariusz Slabicki, Konrad Polys'
 
 import math
 import csv
@@ -12,34 +12,34 @@ class NetworkDevice:
 
 class UE(NetworkDevice):
     """UE"""
-    def __init__(self, parent):
-        self.parent = parent
+    def __init__(self):
         self.ID = 0
         self.connectedToBS = 0
-        self.inside = False
+        self.inside = True
 
     def distanceToBS(self, BS):
         return math.sqrt((self.x-BS.x)**2+(self.y-BS.y)**2)
 
     def isSeenFromBS(self, BS):
-        return True
+        if BS.omnidirectionalAntenna == True:
+            return True
         #returns true if angle allow signal receive, else False
-        # a_y = BS.y-self.y
-        # distance_bs_ue = self.distanceToBS(BS)
-        # if distance_bs_ue == 0 or BS.turnedOn == False:
-        #     return False
-        # ue_angle_rad = math.acos(a_y/distance_bs_ue)
-        # ue_angle = math.degrees(ue_angle_rad)
-        # if self.x <= BS.x:
-        #     ue_angle = 360 - ue_angle
-        # if BS.angle > ue_angle:
-        #     alpha_diff = BS.angle - ue_angle
-        # else:
-        #     alpha_diff = ue_angle - BS.angle
-        # if alpha_diff <= 60 or alpha_diff >= 300:
-        #     return True
-        # else:
-        #     return False
+        a_y = BS.y-self.y
+        distance_bs_ue = self.distanceToBS(BS)
+        if distance_bs_ue == 0 or BS.turnedOn == False:
+            return False
+        ue_angle_rad = math.acos(a_y/distance_bs_ue)
+        ue_angle = math.degrees(ue_angle_rad)
+        if self.x <= BS.x:
+            ue_angle = 360 - ue_angle
+        if BS.angle > ue_angle:
+            alpha_diff = BS.angle - ue_angle
+        else:
+            alpha_diff = ue_angle - BS.angle
+        if alpha_diff <= 60 or alpha_diff >= 300:
+            return True
+        else:
+            return False
 
     def connectToNearestBS(self, BS_vector):
         closestDistance = -1
@@ -52,13 +52,13 @@ class UE(NetworkDevice):
                     foundBS = bs.ID
         self.connectedToBS = foundBS
 
-    def connectToTheBestBS(self, BS_vector):
+    def connectToTheBestBS(self, BS_vector, obstacleVector = None):
         theBestSINR = -1000
         foundBS = -1
         for bs in BS_vector:
             if self.isSeenFromBS(bs):
                 self.connectedToBS = bs.ID
-                currentSINR = self.calculateSINR(BS_vector)
+                currentSINR = self.calculateSINR(BS_vector, obstacleVector)
                 if theBestSINR < currentSINR or foundBS == -1:
                     theBestSINR = currentSINR
                     foundBS = bs.ID
@@ -129,6 +129,7 @@ class UE(NetworkDevice):
             pRec = pSend
         return pRec
 
+
     def calculateNoise(self, bandwidth=20):
         k = 1.3806488 * math.pow(10, -23)
         T = 293.0
@@ -171,7 +172,7 @@ class UE(NetworkDevice):
             if self.isSeenFromBS(bs_other) is False:
                 continue
 
-            if (where=="in" and self.parent.SFRenabled):
+            if (where=="in"):
                 sum_power_mw = 0
                 for i in range(1,4):
                     if (myColor == i):
@@ -184,14 +185,11 @@ class UE(NetworkDevice):
                     sum_power_mw += math.pow(10, self.calculateReceivedPower(bs_other_power, self.distanceToBS(bs_other))/10)
                 receivedPower_one = 10*math.log10(sum_power_mw/2.0)
             else: # where=="out"
-                if (self.parent.SFRenabled):
-                    if(bs_other.color == myColor):
-                        bs_other_power = bs_other.outsidePower
-                    else:
-                        bs_other_power = bs_other.insidePower
-                    receivedPower_one = self.calculateReceivedPower(bs_other_power, self.distanceToBS(bs_other))
+                if(bs_other.color == myColor):
+                    bs_other_power = bs_other.outsidePower
                 else:
-                    receivedPower_one = self.calculateReceivedPower(bs_other.outsidePower, self.distanceToBS(bs_other))
+                    bs_other_power = bs_other.insidePower
+                receivedPower_one = self.calculateReceivedPower(bs_other_power, self.distanceToBS(bs_other))
 
             if obstacleVector != None:
                 receivedPower_one = receivedPower_one - self.calculateWallLoss(BS_vector, obstacleVector)
@@ -207,24 +205,19 @@ class UE(NetworkDevice):
         return SINR
 
     def calculateSINR(self, BS_vector, obstacleVector = None):
-        if self.parent.SFRenabled:
-            SINRin = self.calculateSINRfor("in", BS_vector, obstacleVector)
-            if(SINRin > BS_vector[self.connectedToBS].mi):
-                SINR=SINRin
-                self.inside = True
-            else:
-                SINR=self.calculateSINRfor("out", BS_vector, obstacleVector)
-                self.inside = False
+        SINRin = self.calculateSINRfor("in", BS_vector, obstacleVector)
+        if(SINRin > BS_vector[self.connectedToBS].mi):
+            SINR=SINRin
+            self.inside = True
         else:
             SINR=self.calculateSINRfor("out", BS_vector, obstacleVector)
             self.inside = False
         return SINR
 
-
-    def calculateMaxThroughputOfTheNode(self, bs_vector):
+    def calculateMaxThroughputOfTheNode(self, bs_vector, obstacles = None):
         r_i = 0.0
         M_i = 0.0
-        sinr = self.calculateSINR(bs_vector)
+        sinr = self.calculateSINR(bs_vector, obstacles)
         if sinr < -5.45:
             r_i = 0
             M_i = 1
@@ -274,7 +267,7 @@ class UE(NetworkDevice):
             r_i = 948/1024
             M_i = 64
 
-        if (self.parent.SFRenabled):
+        if bs_vector[self.connectedToBS].useSFR == True:
             if self.inside:
                 capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200*(2/3))/1)
                 capacityForUE_s = capacityForUE_ms * 1000
@@ -282,7 +275,7 @@ class UE(NetworkDevice):
                 capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200*(1/3))/1)
                 capacityForUE_s = capacityForUE_ms * 1000
         else:
-            capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200)/1) #moze razy trzy
+            capacityForUE_ms = r_i * math.log2(M_i) * 12 * 7 * ((200)/1)
             capacityForUE_s = capacityForUE_ms * 1000
         return capacityForUE_s
 
@@ -298,6 +291,8 @@ class BS(NetworkDevice):
         self.angle = 0
         self.turnedOn = False
         self.type = "MakroCell"
+        self.omnidirectionalAntenna = False
+        self.useSFR = False
         self.characteristic = []
 
     def loadCharacteristic(self, filename):
