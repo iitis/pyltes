@@ -39,6 +39,19 @@ class CellularNetwork:
         with open(filename+".pnf", 'rb') as f:
             return pickle.load(f)
 	
+    def addOneBSTower(self, x_pos, y_pos, omnidirectional = False):
+        if omnidiretional == False:
+            for i in range(3):
+                 bs = devices.BS()
+                bs.x = x_pos
+                bs.y = y_pos
+                bs.insidePower = 37
+                bs.outsidePower = 40
+                bs.angle = i * 120
+                bs.ID = len(self.bs)
+                bs.turnedOn = True
+                self.bs.append(copy.deepcopy(bs))
+	
     def printPowersInBS(self):
         powers = []
         for bs in self.bs:
