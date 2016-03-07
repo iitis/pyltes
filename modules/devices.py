@@ -106,7 +106,7 @@ class UE(NetworkDevice):
         b = 0.0065
         c = 17.1
         d = 10.8
-        s = 15,8
+        s = 15.8
 
         ht = 40
         hr = 1.5
