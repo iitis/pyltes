@@ -33,16 +33,16 @@ class CellularNetwork:
     def saveNetworkToFile(self, filename):
         with open(filename+".pnf", 'wb') as f:
             pickle.dump(self, f)
-	
+
     @classmethod
     def loadNetworkFromFile(cls, filename):
         with open(filename+".pnf", 'rb') as f:
             return pickle.load(f)
 	
     def addOneBSTower(self, x_pos, y_pos, omnidirectional = False):
-        if omnidiretional == False:
+        if omnidirectional == False:
             for i in range(3):
-                 bs = devices.BS()
+                bs = devices.BS()
                 bs.x = x_pos
                 bs.y = y_pos
                 bs.insidePower = 37
