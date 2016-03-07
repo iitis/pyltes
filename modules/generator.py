@@ -30,8 +30,12 @@ class Generator:
         H_hex = 2 * radius
         W_hex = radius * math.sqrt(3)
         self.parent.radius = radius
-        self.parent.constraintAreaMaxX = 6.5 * W_hex
-        self.parent.constraintAreaMaxY = 3 * H_hex + 3.5 * radius
+        if numberOfBS == 36:
+            self.parent.constraintAreaMaxX = 6.5 * W_hex
+            self.parent.constraintAreaMaxY = 3 * H_hex + 3.5 * radius
+        if numberOfBS == 108:
+            self.parent.constraintAreaMaxX = 9.5 * W_hex
+            self.parent.constraintAreaMaxY = 6 * H_hex + 6.5 * radius
         for i in range(0, numberOfBS):
             bs = devices.BS()
             bs.ID = i
@@ -40,17 +44,23 @@ class Generator:
             self.useSFR = SFR
             self.parent.bs.append(bs)
 
-        numberOfRows = 3
-        numberOfColumns = 4
+        if numberOfBS == 36:
+            numberOfRows = 3
+            numberOfColumns = 4
+            multiplier = 12
+        if numberOfBS == 108:
+            numberOfRows = 6
+            numberOfColumns = 6
+            multiplier = 18
 
         for row_number in range(0, numberOfRows):
             for column_number  in range(0, numberOfColumns):
                 for sector_nb in range(0, 3):
-                    self.parent.bs[12*row_number + 3*column_number + sector_nb].x = (3*(column_number+1)-1) * d_x
-                    self.parent.bs[12*row_number + 3*column_number + sector_nb].y = (1 + row_number) * H_hex - d_y + row_number * radius
+                    self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].x = (3*(column_number+1)-1) * d_x
+                    self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].y = (1 + row_number) * H_hex - d_y + row_number * radius
                     if column_number % 2 == 1:
-                        self.parent.bs[12*row_number + 3*column_number + sector_nb].y += d_y
-                    self.parent.bs[12*row_number + 3*column_number + sector_nb].angle = sector_nb * 120
+                        self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].y += d_y
+                        self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].angle = sector_nb * 120
 
     def loadDeploymentFromFile(self, filename):
         self.parent.constraintAreaMaxX = 3000
