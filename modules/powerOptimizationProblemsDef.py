@@ -3,7 +3,7 @@ __author__ = 'mslabicki'
 from PyGMO.problem import base
 import numpy
 
-class maximalThroughputProblemRR(base):
+class maximalThroughputProblemRR_const(base):
     def __init__(self, dim = 1):
         super().__init__(dim, dim)
         self.set_bounds(10, 40)
@@ -17,7 +17,37 @@ class maximalThroughputProblemRR(base):
         sumofThroughput = sum(ueThroughputVector)
         return (-sumofThroughput, )
 
-class local_maximalThroughputProblemRR(base):
+class local_maximalThroughputProblemRR_const(base):
+    def __init__(self, dim = 1):
+        super().__init__(dim, dim)
+        self.set_bounds(10, 40)
+        self.__dim = dim
+        self.siec = []
+        self.bsList = []
+
+    def _objfun_impl(self, x):
+        for i in range(len(x)):
+            self.siec.bs[int(self.bsList[i])].outsidePower = x[i]
+        ueThroughputVector = self.siec.returnRealUEThroughputVectorRR()
+        sumofThroughput = sum(ueThroughputVector)
+        return (-sumofThroughput, )
+
+class maximalThroughputProblemRR_thebest(base):
+    def __init__(self, dim = 1):
+        super().__init__(dim, dim)
+        self.set_bounds(10, 40)
+        self.__dim = dim
+        self.siec = []
+
+    def _objfun_impl(self, x):
+        for i in range(len(x)):
+            self.siec.bs[i].outsidePower = x[i]
+        self.siec.connectUsersToTheBestBS()
+        ueThroughputVector = self.siec.returnRealUEThroughputVectorRR()
+        sumofThroughput = sum(ueThroughputVector)
+        return (-sumofThroughput, )
+
+class local_maximalThroughputProblemRR_thebest(base):
     def __init__(self, dim = 1):
         super().__init__(dim, dim)
         self.set_bounds(10, 40)
@@ -32,112 +62,3 @@ class local_maximalThroughputProblemRR(base):
         ueThroughputVector = self.siec.returnRealUEThroughputVectorRR()
         sumofThroughput = sum(ueThroughputVector)
         return (-sumofThroughput, )
-
-class maximalThroughputProblemFS(base):
-    def __init__(self, dim = 1):
-        super().__init__(dim, dim)
-        self.set_bounds(10, 40)
-        self.__dim = dim
-        self.siec = []
-
-    def _objfun_impl(self, x):
-        for i in range(len(x)):
-            self.siec.bs[i].outsidePower = x[i]
-        self.siec.connectUsersToTheBestBS()
-        ueThroughputVector = self.siec.returnRealUEThroughputVectorFS()
-        sumofThroughput = sum(ueThroughputVector)
-        return (-sumofThroughput, )
-
-class medianThroughputProblemRR(base):
-    def __init__(self, dim = 1):
-        super().__init__(dim, dim)
-        self.set_bounds(10, 40)
-        self.__dim = dim
-        self.siec = []
-
-    def _objfun_impl(self, x):
-        for i in range(len(x)):
-            self.siec.bs[i].outsidePower = x[i]
-        self.siec.connectUsersToTheBestBS()
-        ueThroughputVector = self.siec.returnRealUEThroughputVectorRR()
-        medianThroughput = numpy.median(ueThroughputVector)
-        return (-medianThroughput, )
-
-class medianThroughputProblemFS(base):
-    def __init__(self, dim = 1):
-        super().__init__(dim, dim)
-        self.set_bounds(10, 40)
-        self.__dim = dim
-        self.siec = []
-
-    def _objfun_impl(self, x):
-        for i in range(len(x)):
-            self.siec.bs[i].outsidePower = x[i]
-        self.siec.connectUsersToTheBestBS()
-        ueThroughputVector = self.siec.returnRealUEThroughputVectorFS()
-        medianThroughput = numpy.median(ueThroughputVector)
-        return (-medianThroughput, )
-
-class minIqrProblemRR(base):
-    def __init__(self, dim = 1):
-        super().__init__(dim, dim)
-        self.set_bounds(10, 40)
-        self.__dim = dim
-        self.siec = []
-
-    def _objfun_impl(self, x):
-        for i in range(len(x)):
-            self.siec.bs[i].outsidePower = x[i]
-        self.siec.connectUsersToTheBestBS()
-        ueThroughputVector = self.siec.returnRealUEThroughputVectorRR()
-        p25 = numpy.percentile(ueThroughputVector, 25)
-        p75 = numpy.percentile(ueThroughputVector, 75)
-        iqr = p75 - p25
-        return (-iqr, )
-
-class minIqrProblemFS(base):
-    def __init__(self, dim = 1):
-        super().__init__(dim, dim)
-        self.set_bounds(10, 40)
-        self.__dim = dim
-        self.siec = []
-
-    def _objfun_impl(self, x):
-        for i in range(len(x)):
-            self.siec.bs[i].outsidePower = x[i]
-        self.siec.connectUsersToTheBestBS()
-        ueThroughputVector = self.siec.returnRealUEThroughputVectorFS()
-        p25 = numpy.percentile(ueThroughputVector, 25)
-        p75 = numpy.percentile(ueThroughputVector, 75)
-        iqr = p75 - p25
-        return (-iqr, )
-
-class maxTotalSINRProblem(base):
-    def __init__(self, dim = 1):
-        super().__init__(dim, dim)
-        self.set_bounds(10, 40)
-        self.__dim = dim
-        self.siec = []
-
-    def _objfun_impl(self, x):
-        for i in range(len(x)):
-            self.siec.bs[i].outsidePower = x[i]
-        self.siec.connectUsersToTheBestBS()
-        SINRVector = self.siec.calculateSINRVectorForAllUE()
-        totalSINR = sum(SINRVector)
-        return (-totalSINR, )
-
-class maxMedianSINRProblem(base):
-    def __init__(self, dim = 1):
-        super().__init__(dim, dim)
-        self.set_bounds(10, 40)
-        self.__dim = dim
-        self.siec = []
-
-    def _objfun_impl(self, x):
-        for i in range(len(x)):
-            self.siec.bs[i].outsidePower = x[i]
-        self.siec.connectUsersToTheBestBS()
-        SINRVector = self.siec.calculateSINRVectorForAllUE()
-        medianSINR = numpy.median(SINRVector)
-        return (-medianSINR, )
