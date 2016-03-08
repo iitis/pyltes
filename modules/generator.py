@@ -33,6 +33,9 @@ class Generator:
         if numberOfBS == 36:
             self.parent.constraintAreaMaxX = 6.5 * W_hex
             self.parent.constraintAreaMaxY = 3 * H_hex + 3.5 * radius
+        if numberOfBS == 75:
+            self.parent.constraintAreaMaxX = 8 * W_hex
+            self.parent.constraintAreaMaxY = 4 * H_hex + 7.5 * radius
         if numberOfBS == 108:
             self.parent.constraintAreaMaxX = 9.5 * W_hex
             self.parent.constraintAreaMaxY = 6 * H_hex + 6.5 * radius
@@ -48,6 +51,10 @@ class Generator:
             numberOfRows = 3
             numberOfColumns = 4
             multiplier = 12
+        if numberOfBS == 75:
+            numberOfRows = 5
+            numberOfColumns = 5
+            multiplier = 15
         if numberOfBS == 108:
             numberOfRows = 6
             numberOfColumns = 6
