@@ -73,6 +73,7 @@ class pygmoPowerConfigurator:
         if method == "local":
             for i in range(len(prob.bsList)):
                 self.parent.bs[int(prob.bsList[i])].outsidePower = archi[islandNumber].population.champion.x[i]
+            return len(localBsVector)
 
     def findPowersMaxThrRR_const(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
         prob = maximalThroughputProblemRR_const(dim=len(self.parent.bs))
