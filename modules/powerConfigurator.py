@@ -15,7 +15,6 @@ class pygmoPowerConfigurator:
         self.parent = parent
 
     def findPowersMaxThrRR(self, connections="const", sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10, method="global", x_arg=None, y_arg=None, expectedSignalLoss_arg=None):
-
         if method == "local":
             if x_arg == None:
                 x = self.parent.constraintAreaMaxX/2
@@ -74,104 +73,6 @@ class pygmoPowerConfigurator:
             for i in range(len(prob.bsList)):
                 self.parent.bs[int(prob.bsList[i])].outsidePower = archi[islandNumber].population.champion.x[i]
             return len(localBsVector)
-
-    def findPowersMaxThrRR_const(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
-        prob = maximalThroughputProblemRR_const(dim=len(self.parent.bs))
-        prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=sgaGenerations)
-        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
-        archi.evolve(evolveTimes)
-        archi.join()
-        theBestCostF = 0
-        islandNumber = -1
-        islandCounter = 0
-        for island in archi:
-            if theBestCostF > island.population.champion.f[0]:
-                theBestCostF = island.population.champion.f[0]
-                islandNumber = islandCounter
-            islandCounter = islandCounter + 1
-        for i in range(len(self.parent.bs)):
-            self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
-
-    def findPowersMaxThrRR_thebest(self, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
-        prob = maximalThroughputProblemRR_thebest(dim=len(self.parent.bs))
-        prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=sgaGenerations)
-        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
-        archi.evolve(evolveTimes)
-        archi.join()
-        theBestCostF = 0
-        islandNumber = -1
-        islandCounter = 0
-        for island in archi:
-            if theBestCostF > island.population.champion.f[0]:
-                theBestCostF = island.population.champion.f[0]
-                islandNumber = islandCounter
-            islandCounter = islandCounter + 1
-        for i in range(len(self.parent.bs)):
-            self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
-
-    def local_findPowersMaxThrRR_const(self, x, y, expectedSignalLoss, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
-        maxDistance = returnDistanceFromSNR(expectedSignalLoss)
-        localBsVector = []
-        for bs in self.parent.bs:
-            if math.sqrt((bs.x - x)**2 + (bs.y - y)**2) < maxDistance:
-                row = []
-                row.append(int(bs.ID))
-                row.append(math.sqrt((bs.x - x)**2 + (bs.y - y)**2))
-                localBsVector.append(row)
-        localBsVector = np.asarray(localBsVector)
-
-        prob = local_maximalThroughputProblemRR_const(dim=len(localBsVector))
-        for i in range(len(localBsVector)):
-            prob.bsList.append(localBsVector[i,0])
-        prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=sgaGenerations)
-        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
-        archi.evolve(evolveTimes)
-        archi.join()
-        theBestCostF = 0
-        islandNumber = -1
-        islandCounter = 0
-        for island in archi:
-            if theBestCostF > island.population.champion.f[0]:
-                theBestCostF = island.population.champion.f[0]
-                islandNumber = islandCounter
-            islandCounter = islandCounter + 1
-        for i in range(len(prob.bsList)):
-            self.parent.bs[int(prob.bsList[i])].outsidePower = archi[islandNumber].population.champion.x[i]
-        return len(localBsVector)
-
-    def local_findPowersMaxThrRR_thebest(self, x, y, expectedSignalLoss, sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10):
-        maxDistance = returnDistanceFromSNR(expectedSignalLoss)
-        localBsVector = []
-        for bs in self.parent.bs:
-            if math.sqrt((bs.x - x)**2 + (bs.y - y)**2) < maxDistance:
-                row = []
-                row.append(int(bs.ID))
-                row.append(math.sqrt((bs.x - x)**2 + (bs.y - y)**2))
-                localBsVector.append(row)
-        localBsVector = np.asarray(localBsVector)
-
-        prob = local_maximalThroughputProblemRR_thebest(dim=len(localBsVector))
-        for i in range(len(localBsVector)):
-            prob.bsList.append(localBsVector[i,0])
-        prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=sgaGenerations)
-        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals)
-        archi.evolve(evolveTimes)
-        archi.join()
-        theBestCostF = 0
-        islandNumber = -1
-        islandCounter = 0
-        for island in archi:
-            if theBestCostF > island.population.champion.f[0]:
-                theBestCostF = island.population.champion.f[0]
-                islandNumber = islandCounter
-            islandCounter = islandCounter + 1
-        for i in range(len(prob.bsList)):
-            self.parent.bs[int(prob.bsList[i])].outsidePower = archi[islandNumber].population.champion.x[i]
-        return len(localBsVector)
 
 def returnDistanceFromSNR(expectedSignalLoss):
     lambda_val = 0.142758313333
