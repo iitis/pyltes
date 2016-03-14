@@ -172,7 +172,7 @@ class UE(NetworkDevice):
             if self.isSeenFromBS(bs_other) is False:
                 continue
 
-            if (where=="in"):
+            if (where=="in" and BS_vector[self.connectedToBS].useSFR):
                 sum_power_mw = 0
                 for i in range(1,4):
                     if (myColor == i):
@@ -205,10 +205,14 @@ class UE(NetworkDevice):
         return SINR
 
     def calculateSINR(self, BS_vector, obstacleVector = None):
-        SINRin = self.calculateSINRfor("in", BS_vector, obstacleVector)
-        if(SINRin > BS_vector[self.connectedToBS].mi):
-            SINR=SINRin
-            self.inside = True
+        if BS_vector[self.connectedToBS].useSFR:
+            SINRin = self.calculateSINRfor("in", BS_vector, obstacleVector)
+            if(SINRin > BS_vector[self.connectedToBS].mi):
+                SINR=SINRin
+                self.inside = True
+            else:
+                SINR=self.calculateSINRfor("out", BS_vector, obstacleVector)
+                self.inside = False
         else:
             SINR=self.calculateSINRfor("out", BS_vector, obstacleVector)
             self.inside = False
