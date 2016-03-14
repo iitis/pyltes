@@ -69,7 +69,7 @@ class Printer:
 
         elif fillMethod == "Sectors":
             if colorMap == None:
-                cm = plt.cm.get_cmap("flag")
+                cm = plt.cm.get_cmap("Paired")
             else:
                 cm = plt.cm.get_cmap(colorMap)
             ue = devices.UE()

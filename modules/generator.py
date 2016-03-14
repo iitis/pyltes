@@ -36,6 +36,9 @@ class Generator:
         if numberOfBS == 75:
             self.parent.constraintAreaMaxX = 8 * W_hex
             self.parent.constraintAreaMaxY = 4 * H_hex + 7.5 * radius
+        if numberOfBS == 90:
+            self.parent.constraintAreaMaxX = 9.5 * W_hex
+            self.parent.constraintAreaMaxY = 4 * H_hex + 7.5 * radius
         if numberOfBS == 108:
             self.parent.constraintAreaMaxX = 9.5 * W_hex
             self.parent.constraintAreaMaxY = 6 * H_hex + 6.5 * radius
@@ -55,6 +58,10 @@ class Generator:
             numberOfRows = 5
             numberOfColumns = 5
             multiplier = 15
+        if numberOfBS == 90:
+            numberOfRows = 5
+            numberOfColumns = 6
+            multiplier = 18
         if numberOfBS == 108:
             numberOfRows = 6
             numberOfColumns = 6
@@ -65,9 +72,11 @@ class Generator:
                 for sector_nb in range(0, 3):
                     self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].x = (3*(column_number+1)-1) * d_x
                     self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].y = (1 + row_number) * H_hex - d_y + row_number * radius
+                    self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].angle = sector_nb * 120
                     if column_number % 2 == 1:
+                        self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].x = (3*(column_number+1)-1) * d_x
                         self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].y += d_y
-                        self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].angle = sector_nb * 120
+                        self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].angle += 60
 
     def loadDeploymentFromFile(self, filename):
         self.parent.constraintAreaMaxX = 3000
