@@ -1,10 +1,12 @@
 __author__ = 'mslabicki'
 
 from PyGMO import *
-from modules.powerOptimizationProblemsDef import maximalThroughputProblemRR_const
-from modules.powerOptimizationProblemsDef import local_maximalThroughputProblemRR_const
-from modules.powerOptimizationProblemsDef import maximalThroughputProblemRR_thebest
-from modules.powerOptimizationProblemsDef import local_maximalThroughputProblemRR_thebest
+from modules.powerOptimizationProblemsDef import maximalThroughputProblemRR
+from modules.powerOptimizationProblemsDef import local_maximalThroughputProblemRR
+from modules.powerOptimizationProblemsDef import maximalMedianThrProblemRR
+from modules.powerOptimizationProblemsDef import local_maximalMedianThrProblemRR
+from modules.powerOptimizationProblemsDef import minInterQuartileRangeroblemRR
+from modules.powerOptimizationProblemsDef import local_minInterQuartileRangeroblemRR
 
 import copy
 import math
@@ -14,7 +16,7 @@ class pygmoPowerConfigurator:
     def __init__(self,parent):
         self.parent = parent
 
-    def findPowersMaxThrRR(self, connections="const", sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10, method="global", x_arg=None, y_arg=None, expectedSignalLoss_arg=None):
+    def findPowersRR(self, objectiveFunction="averageThr", sgaGenerations = 100, numberOfThreads = 11, numOfIndividuals = 10, evolveTimes = 10, method="global", x_arg=None, y_arg=None, expectedSignalLoss_arg=None):
         if method == "local":
             if x_arg == None:
                 x = self.parent.constraintAreaMaxX/2
@@ -36,22 +38,32 @@ class pygmoPowerConfigurator:
                     row.append(math.sqrt((bs.x - x)**2 + (bs.y - y)**2))
                     localBsVector.append(row)
             localBsVector = np.asarray(localBsVector)
+        if objectiveFunction == "averageThr":
+            if method == "local":
+                prob = local_maximalThroughputProblemRR(dim=len(localBsVector))
+                for i in range(len(localBsVector)):
+                    prob.bsList.append(localBsVector[i,0])
 
-        if method == "local" and connections == "const":
-            prob = local_maximalThroughputProblemRR_const(dim=len(localBsVector))
-            for i in range(len(localBsVector)):
-                prob.bsList.append(localBsVector[i,0])
+            if method == "global":
+                prob = maximalThroughputProblemRR(dim=len(self.parent.bs))
 
-        if method == "local" and connections == "theBest":
-            prob = local_maximalThroughputProblemRR_thebest(dim=len(localBsVector))
-            for i in range(len(localBsVector)):
-                prob.bsList.append(localBsVector[i,0])
+        if objectiveFunction == "medianThr":
+            if method == "local":
+                prob = local_maximalMedianThrProblemRR(dim=len(localBsVector))
+                for i in range(len(localBsVector)):
+                    prob.bsList.append(localBsVector[i,0])
 
-        if method == "global" and connections == "const":
-            prob = maximalThroughputProblemRR_const(dim=len(self.parent.bs))
+            if method == "global":
+                prob = maximalMedianThrProblemRR(dim=len(self.parent.bs))
 
-        if method == "global" and connections == "theBest":
-            prob = maximalThroughputProblemRR_thebest(dim=len(self.parent.bs))
+        if objectiveFunction == "minIQRthr":
+            if method == "local":
+                prob = local_minInterQuartileRangeroblemRR(dim=len(localBsVector))
+                for i in range(len(localBsVector)):
+                    prob.bsList.append(localBsVector[i,0])
+
+            if method == "global":
+                prob = minInterQuartileRangeroblemRR(dim=len(self.parent.bs))
 
         prob.siec = copy.deepcopy(self.parent)
         algo = algorithm.sga(gen=sgaGenerations)
