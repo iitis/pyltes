@@ -14,8 +14,7 @@ class Printer:
     def drawHistogramOfUEThroughput(self, filename):
         thr_vector = self.parent.returnRealUEThroughputVectorRR()
         thr_MBit = [x / (1024*1024) for x in thr_vector]
-        plt.hist(thr_MBit, bins=np.arange(0, (25 + 1), 0.25))
-        plt.xlim(0, 25)
+        plt.hist(thr_MBit)
         # plt.savefig(filename, format="pdf", dpi=300)
         plt.savefig(filename+".png", format="png", dpi=300)
         plt.clf()
