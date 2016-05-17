@@ -1,12 +1,12 @@
 __author__ = 'mslabicki'
 
 from PyGMO import *
-from modules.powerOptimizationProblemsDef import maximalThroughputProblemRR
-from modules.powerOptimizationProblemsDef import local_maximalThroughputProblemRR
-from modules.powerOptimizationProblemsDef import maximalMedianThrProblemRR
-from modules.powerOptimizationProblemsDef import local_maximalMedianThrProblemRR
-from modules.powerOptimizationProblemsDef import minInterQuartileRangeroblemRR
-from modules.powerOptimizationProblemsDef import local_minInterQuartileRangeroblemRR
+from pyltes.powerOptimizationProblemsDef import maximalThroughputProblemRR
+from pyltes.powerOptimizationProblemsDef import local_maximalThroughputProblemRR
+from pyltes.powerOptimizationProblemsDef import maximalMedianThrProblemRR
+from pyltes.powerOptimizationProblemsDef import local_maximalMedianThrProblemRR
+from pyltes.powerOptimizationProblemsDef import minInterQuartileRangeroblemRR
+from pyltes.powerOptimizationProblemsDef import local_minInterQuartileRangeroblemRR
 
 import copy
 import math

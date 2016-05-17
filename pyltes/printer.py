@@ -1,6 +1,6 @@
 __author__ = 'Mariusz'
 
-from modules import devices
+from pyltes import devices
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib

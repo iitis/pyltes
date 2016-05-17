@@ -1,10 +1,9 @@
 __author__ = 'Mariusz Slabicki, Konrad Polys'
 
-from modules import devices
-from modules import generator
-from modules import printer
-from modules import powerConfigurator
-from modules import colorConfigurator
+from pyltes import devices
+from pyltes import generator
+from pyltes import printer
+
 import math
 import random
 import pickle
@@ -27,9 +26,17 @@ class CellularNetwork:
         self.optimizationFunctionResults = None
         self.Generator = generator.Generator(self)
         self.Printer = printer.Printer(self)
-        self.powerConfigurator = powerConfigurator.pygmoPowerConfigurator(self)
-        self.colorConfigurator = colorConfigurator.pygmoColorConfigurator(self)
+        self.powerConfigurator = []
+        self.colorConfigurator = []
 	
+    def loadPowerConfigurator(self):
+        from modules import powerConfigurator
+        self.powerConfigurator = powerConfigurator.pygmoPowerConfigurator(self)
+
+    def loadColorConfigurator(self):
+        from modules import colorConfigurator
+        self.colorConfigurator = colorConfigurator.pygmoColorConfigurator(self)
+
     def saveNetworkToFile(self, filename):
         with open(filename+".pnf", 'wb') as f:
             pickle.dump(self, f)

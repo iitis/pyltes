@@ -1,9 +1,9 @@
-__author__ = 'Mariusz Słabicki, Konrad Połys'
+__author__ = 'Mariusz Slabicki, Konrad Połys'
 
 import math
 import csv
 import random
-from modules import devices
+from pyltes import devices
 
 class Generator:
     """Class that generates network deployment"""
