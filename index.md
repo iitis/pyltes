@@ -4,9 +4,9 @@ title: PyLTEs
 
 # PyLTEs
 
-PyLTEs is a framework that allows to evaluate model of protocols/mechanisms/approach for LTE networks. Because of the wide flexibility it is hard to determine what is possible in them. It is easier to define, that this framework gives an opportunity to develop your own models. Currently there is few use-cases, for which PyLTEs was used. 
+PyLTEs is a framework that allows to evaluate model of protocols/mechanisms/approach for LTE networks. Because of the wide flexibility it is hard to determine what is possible in them. It is easier to define, that this framework gives an opportunity to develop your own models. Currently there is few use-cases, for which PyLTEs was used.
 
-Opportunities:
+#Opportunities:
 * analyse the average signal level (SINR) in a network,
 * evaluate throughput of users in a network,
 * find the optimal Tx power of eNodeBs,
