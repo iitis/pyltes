@@ -24,6 +24,7 @@ Repository can be found here: [PyLTEs](https://github.com/iitis/PyLTEs)
 
 # How to run:
 Download PyLTEs repository. You can make it via git or manually. In directory "PyLTEs" create a file “firstNetwork.py” and copy below code:
+
 ```python
 network = CellularNetwork()
 network.Generator.create1BSnetwork(1666)
@@ -34,10 +35,13 @@ network.connectUsersToTheBestBS()
 network.Printer.drawHistogramOfUEThroughput("thrHistogram")
 network.Printer.drawNetwork(fillMethod="SINR", filename="sinrMap")
 ```
+
 In terminal runs
+
 ```bash
 python3.5 firstNetwork.py
 ```
+
 After few seconds you should see an output on the terminal, and few files in the directory. Have fun!
 Note: if you have other Python version you should run this script with your Python.
 
