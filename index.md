@@ -26,6 +26,8 @@ Repository can be found here: [PyLTEs](https://github.com/iitis/PyLTEs)
 Download PyLTEs repository. You can make it via git or manually. In directory "PyLTEs" create a file “firstNetwork.py” and copy below code:
 
 ```python
+from pyltes.network import CellularNetwork
+
 network = CellularNetwork()
 network.Generator.create1BSnetwork(1666)
 
