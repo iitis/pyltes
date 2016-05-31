@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>PyLTEs - Python LTE Software</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body{
+        padding-top:60px;
+    }
+    /* fix padding under menu after resize */
+    @media screen and (max-width: 767px) {
+        body { padding-top: 60px; }
+    }
+    @media screen and (min-width:768px) and (max-width: 991px) {
+        body { padding-top: 110px; }
+    }
+    @media screen and (min-width: 992px) {
+        body { padding-top: 60px; }
+    }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">PyLTEs</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="main-navbar">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#examples">Examples</a>
+                    </li>
+                    <li>
+                        <a href="#research">Research</a>
+                    </li>
+                    <li>
+                        <a href="#todo">Todo</a>
+                    </li>
+                    <li>
+                        <a href="#contribution">Contribution</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Pyltes Content -->
+    <section id="pyltes">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>PyLTEs</h1>
+                <p class="text-justify">
+		PyLTEs is a framework that allows to evaluate model of protocols/mechanisms/approach for LTE networks. Because of the wide flexibility it is hard to determine what is possible in them. It is easier to define, that this framework gives an opportunity to develop your own models. Currently there is few use-cases, for which PyLTEs was used.
+		</p>
+		<h3>Opportunities</h3>
+                <ul>
+                    <li>analyse the average signal level (SINR) in a network,</li>
+                    <li>evaluate throughput of users in a network,</li>
+                    <li>find the optimal Tx power of eNodeBs,</li>
+                    <li>evaluate different Frequency Reuse.</li>
+                </ul>
+		<p>
+		Repository can be found here: <a href="https://github.com/iitis/PyLTEs/" target="_blank">PyLTEs</a>
+		</p>
+		<p>This software is a sub-output of <a href="https://www.iitis.pl/~mslabicki/" target="_blank">PhD thesis</a>. It is still under development, so you use it on your own responsibility. Do not give it to children and do not insert it into microwave oven. Remember: software is not a state - it is a process.
+		</p>
+
+		<h3>Requirements:</h3>
+                <ul>
+                    <li>Python (tested for Python3.5)</li>
+                    <li>matplotlib</li>
+                    <li>numpy</li>
+                    <li><a href="http://esa.github.io/pygmo/" target="_blank">PyGMO</a> - if you plan to use optimization module (you can omit it if you don’t know yet)</li>
+                </ul>
+            </div>
+        </div>
+        <!-- /.row -->
+
+    </div>
+    </section>
+    <!-- /.container -->
+
+    <!-- Examples Content -->
+    <section id="examples">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Examples</h1>
+		<h3>How to run:</h3>
+                <p class="text-justify">
+		Download PyLTEs repository. You can make it via git or manually. In directory "PyLTEs" create a file "firstNetwork.py" and copy below code:
+		</p>
+		<pre>
+from pyltes.network import CellularNetwork
+
+network = CellularNetwork()
+network.Generator.create1BSnetwork(1666)
+
+network.Generator.insertUErandomly(20)
+network.connectUsersToTheBestBS()
+
+network.Printer.drawHistogramOfUEThroughput("thrHistogram")
+network.Printer.drawNetwork(fillMethod="SINR", filename="sinrMap")</pre>
+		<p>
+		In terminal run <code>python3.5 firstNetwork.py</code>
+		</p>
+		<p>
+		After few seconds you should see an output on the terminal, and two new image files in the directory:
+		</p>
+		<div class="row">  
+		<div class="col-sm-6"><img class="img-responsive" alt="SINR map" src="files/img/sinrMap.png"></div>       
+		<div class="col-sm-6"><img class="img-responsive" alt="Throughput histogram" src="files/img/thrHistogram.png"></div>
+		</div>
+		<p class="text-justify">
+		That is all, have fun!
+Note: if you have other Python version you should run this script with your Python.
+		</p>
+<h3>Example network files:</h3>
+		<p>
+		Download these files, copy to the directory with PyLTEs (as code from the above) and run in Python:
+                <ul>
+                    <li><code>python3.5 firstNetwork.py</code> <a href="files/examples/firstNetwork.py">script</a></li>
+                    <li><code>python3.5 small_network_sinr.py</code> (work in progress)</li>
+                    <li><code>python3.5 small_network_sectors.py</code> (work in progress)</li>
+                </ul>
+		</p>
+            </div>
+        </div>
+        <!-- /.row -->
+
+    </div>
+    </section>
+    <!-- /.container -->
+
+    <!-- Research Content -->
+    <section id="research">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Research</h1>
+		<h3>Research papers that used PyLTEs:</h3>
+		<p>
+                <ul>
+                    <li>P. Masek, J. Hosek, Y. Zakaria, D. Uhlir, V. Novotny, M. Slabicki, K. Grochla, <b>"Experimental Evaluation of RAN Modelling in Indoor LTE Deployment"</b>, in Ultra Modern Telecommunications and Control Systems and Workshops (ICUMT), 2015 7th International Congress on, Brno 2015 <a href="http://dx.doi.org/10.1109/ICUMT.2015.7382425" target="_blank">Link</a></li>
+                    <li>Slabicki, Mariusz, and Krzysztof Grochla, <b>"Local Approach to Power Management in LTE Networks"</b>, 38th International Conference on Telecommunications and Signal Processing (TSP), 2015 <a href="http://dx.doi.org/10.1109/TSP.2015.7296239" target="_blank">Link</a></li>
+                    <li>Grochla, Krzysztof, and Konrad Połys, <b>"Subcarrier Allocation for LTE Soft Frequency Reuse Based on Graph Colouring"</b>, Information Sciences and Systems 2015: 30th International Symposium on Computer and Information Sciences (ISCIS 2015). Vol. 363. Springer, 2015 <a href="http://dx.doi.org/10.1007/978-3-319-22635-4_41" target="_blank">Link</a></li>
+                    <li>Slabicki, Mariusz, and Krzysztof Grochla, <b>"The Automatic Configuration of Transmit Power in LTE Networks Based on Throughput Estimation"</b>, IEEE 33rd International Performance Computing and Communications Conference (IPCCC), 2014 <a href="http://dx.doi.org/10.1109/PCCC.2014.7017020" target="_blank">Link</a></li>
+                </ul>
+                Please let me know if you used this tool, I will be more than happy to add your paper here.
+		</p>
+            </div>
+        </div>
+        <!-- /.row -->
+
+    </div>
+    </section>
+    <!-- /.container -->
+
+    <!-- Todo Content -->
+    <section id="todo">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Todo / Work in Progress</h1>
+		<h3>Future plans</h3>
+		<p>
+                <ul>
+                    <li>documentation,</li>
+                    <li>functions to generate network (in file generator.py),</li>
+                    <li>code cleaning (there is a lot to do),</li>
+                    <li>improve this page.</li>
+                </ul>
+		</p>
+            </div>
+        </div>
+        <!-- /.row -->
+
+    </div>
+    </section>
+    <!-- /.container -->
+
+    <!-- Contribution Content -->
+    <section id="contribution">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Contribution</h1>
+		<h3>People</h3>
+		<p>
+                <ul>
+                    <li>Mariusz Slabicki - main creator <a href="https://www.iitis.pl/~mslabicki/" target="_blank">www</a></li>
+                    <li>Konrad Polys - sereval small, but important improvements</li>
+                </ul>
+		</p>
+		<h3>Call for participation</h3>
+		<p>
+		If you see any opportunity to contribute to this project, do not hestitate!
+		</p>
+            </div>
+        </div>
+        <!-- /.row -->
+
+    </div>
+    </section>
+    <!-- /.container -->
+
+    <!-- jQuery Version 1.11.1 -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
