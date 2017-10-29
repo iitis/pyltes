@@ -30,7 +30,7 @@ class CellularNetwork:
         self.colorConfigurator = []
 	
     def loadPowerConfigurator(self):
-        from modules import powerConfigurator
+        from pyltes import powerConfigurator
         self.powerConfigurator = powerConfigurator.pygmoPowerConfigurator(self)
 
     def loadColorConfigurator(self):
