@@ -1,12 +1,13 @@
 __author__ = 'mslabicki'
 
-from PyGMO import *
+import pygmo as pg
+#
 from pyltes.powerOptimizationProblemsDef import maximalThroughputProblemRR
-from pyltes.powerOptimizationProblemsDef import local_maximalThroughputProblemRR
-from pyltes.powerOptimizationProblemsDef import maximalMedianThrProblemRR
-from pyltes.powerOptimizationProblemsDef import local_maximalMedianThrProblemRR
-from pyltes.powerOptimizationProblemsDef import minInterQuartileRangeroblemRR
-from pyltes.powerOptimizationProblemsDef import local_minInterQuartileRangeroblemRR
+# from pyltes.powerOptimizationProblemsDef import local_maximalThroughputProblemRR
+# from pyltes.powerOptimizationProblemsDef import maximalMedianThrProblemRR
+# from pyltes.powerOptimizationProblemsDef import local_maximalMedianThrProblemRR
+# from pyltes.powerOptimizationProblemsDef import minInterQuartileRangeroblemRR
+# from pyltes.powerOptimizationProblemsDef import local_minInterQuartileRangeroblemRR
 
 import copy
 import math
@@ -45,7 +46,8 @@ class pygmoPowerConfigurator:
                     prob.bsList.append(localBsVector[i,0])
 
             if method == "global":
-                prob = maximalThroughputProblemRR(dim=len(self.parent.bs))
+                prob = pg.problem(maximalThroughputProblemRR(dim=len(self.parent.bs), networkInstance=self.parent, lowerTxLimit=self.parent.minTxPower, upperTxLimit=self.parent.maxTxPower))
+
 
         if objectiveFunction == "medianThr":
             if method == "local":
@@ -66,21 +68,26 @@ class pygmoPowerConfigurator:
                 prob = minInterQuartileRangeroblemRR(dim=len(self.parent.bs))
 
         prob.siec = copy.deepcopy(self.parent)
-        algo = algorithm.sga(gen=sgaGenerations)
-        archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals, topology = topology.barabasi_albert())
-        archi.evolve(evolveTimes)
-        archi.join()
+        # algo = algorithm.sga(gen=sgaGenerations)
+        algo = pg.algorithm(pg.sga(gen=sgaGenerations))
+        # archi = archipelago(algo, prob, numberOfThreads, numOfIndividuals, topology = topology.barabasi_albert())
+        # archi.evolve(evolveTimes)
+        # archi.join()
+        population = pg.population(prob, numOfIndividuals)
+        population = algo.evolve(population)
+
         theBestCostF = 0
         islandNumber = -1
         islandCounter = 0
-        for island in archi:
-            if theBestCostF > island.population.champion.f[0]:
-                theBestCostF = island.population.champion.f[0]
-                islandNumber = islandCounter
-            islandCounter = islandCounter + 1
+        # for island in archi:
+        #     if theBestCostF > island.population.champion.f[0]:
+        #         theBestCostF = island.population.champion.f[0]
+        #         islandNumber = islandCounter
+        #     islandCounter = islandCounter + 1
+
         if method == "global":
             for i in range(len(self.parent.bs)):
-                self.parent.bs[i].outsidePower = archi[islandNumber].population.champion.x[i]
+                self.parent.bs[i].outsidePower = population.champion_x[i]
         if method == "local":
             for i in range(len(prob.bsList)):
                 self.parent.bs[int(prob.bsList[i])].outsidePower = archi[islandNumber].population.champion.x[i]
