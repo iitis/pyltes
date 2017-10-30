@@ -3,7 +3,7 @@ __author__ = 'mslabicki'
 import pygmo as pg
 #
 from pyltes.powerOptimizationProblemsDef import maximalThroughputProblemRR
-# from pyltes.powerOptimizationProblemsDef import local_maximalThroughputProblemRR
+from pyltes.powerOptimizationProblemsDef import local_maximalThroughputProblemRR
 # from pyltes.powerOptimizationProblemsDef import maximalMedianThrProblemRR
 # from pyltes.powerOptimizationProblemsDef import local_maximalMedianThrProblemRR
 # from pyltes.powerOptimizationProblemsDef import minInterQuartileRangeroblemRR
@@ -41,9 +41,11 @@ class pygmoPowerConfigurator:
             localBsVector = np.asarray(localBsVector)
         if objectiveFunction == "averageThr":
             if method == "local":
-                prob = local_maximalThroughputProblemRR(dim=len(localBsVector))
+                # prob = local_maximalThroughputProblemRR(dim=len(localBsVector))
+                localListBS = []
                 for i in range(len(localBsVector)):
-                    prob.bsList.append(localBsVector[i,0])
+                    localListBS.append(localBsVector[i,0])
+                prob = pg.problem(local_maximalThroughputProblemRR(dim=len(localBsVector), networkInstance=self.parent, lowerTxLimit=self.parent.minTxPower, upperTxLimit=self.parent.maxTxPower, localListBS=localListBS))
 
             if method == "global":
                 prob = pg.problem(maximalThroughputProblemRR(dim=len(self.parent.bs), networkInstance=self.parent, lowerTxLimit=self.parent.minTxPower, upperTxLimit=self.parent.maxTxPower))
@@ -89,8 +91,9 @@ class pygmoPowerConfigurator:
             for i in range(len(self.parent.bs)):
                 self.parent.bs[i].outsidePower = population.champion_x[i]
         if method == "local":
-            for i in range(len(prob.bsList)):
-                self.parent.bs[int(prob.bsList[i])].outsidePower = archi[islandNumber].population.champion.x[i]
+            for i in range(len(localListBS)):
+                # self.parent.bs[int(prob.bsList[i])].outsidePower = archi[islandNumber].population.champion.x[i]
+                self.parent.bs[int(localListBS[i])].outsidePower = population.champion_x[i]
             return len(localBsVector)
 
 def returnDistanceFromSNR(expectedSignalLoss):
