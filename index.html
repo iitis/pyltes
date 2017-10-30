@@ -94,32 +94,32 @@
             <div class="col-lg-12">
                 <h1>PyLTEs</h1>
                 <p class="text-justify col-sm-8">
-		PyLTEs is a framework that allows to evaluate model of protocols/mechanisms/approach for LTE networks. Because of the wide flexibility it is hard to determine what is possible in them. It is easier to define, that this framework gives an opportunity to develop your own models. Currently there are few use-cases, for which PyLTEs was used.
-		</p>
-		<div class="col-sm-4">
-		<a href="http://zosb.iitis.pl/zosb-en"><img style="float:right" class="img-responsive" alt="WNOT logo" width="250" src="files/img/wnot-logo.png"></a>
-		</div>
-		<p class="row">
-		<h3 class="text-left">Opportunities</h3>
+        PyLTEs is a framework that allows to evaluate models of protocols/mechanisms/approach for LTE networks. Because of the wide flexibility it is hard to determine what is possible in them. It is easier to define, that this framework gives an opportunity to develop your own models. Currently there are few use-cases, for which PyLTEs was used.
+        </p>
+        <div class="col-sm-4">
+        <a href="http://zosb.iitis.pl/zosb-en"><img style="float:right" class="img-responsive" alt="WNOT logo" width="250" src="files/img/wnot-logo.png"></a>
+        </div>
+        <p class="row">
+        <h3 class="text-left">Opportunities</h3>
                 <ul>
                     <li>analyse the average signal level (SINR) in a network,</li>
                     <li>evaluate throughput of users in a network,</li>
                     <li>find the optimal Tx power of eNodeBs,</li>
                     <li>evaluate different Frequency Reuse.</li>
                 </ul>
-		</p>
-		<p>
-		Repository can be found here: <a href="https://github.com/iitis/PyLTEs/" target="_blank">PyLTEs</a>
-		</p>
-		<p>This software is a sub-output of <a href="https://www.iitis.pl/~mslabicki/" target="_blank">PhD thesis</a>. It is still under development, so you use it on your own responsibility. Do not give it to children and do not insert it into microwave oven. Remember: software is not a state - it is a process.
-		</p>
+        </p>
+        <p>
+        Repository can be found here: <a href="https://github.com/iitis/PyLTEs/" target="_blank">PyLTEs</a>
+        </p>
+        <p>This software is a sub-output of <a href="https://www.iitis.pl/~mslabicki/" target="_blank">PhD thesis</a>. It is still under development, so you use it on your own responsibility. Do not give it to children and do not insert it into an microwave oven. Remember: software is not a state - it is a process.
+        </p>
 
-		<h3>Requirements:</h3>
+        <h3>Requirements:</h3>
                 <ul>
                     <li>Python (tested for Python3.5)</li>
                     <li>matplotlib</li>
                     <li>numpy</li>
-                    <li><a href="http://esa.github.io/pygmo/" target="_blank">PyGMO</a> - if you plan to use optimization module (you can omit it if you don’t know yet)</li>
+                    <li><a href="http://esa.github.io/pygmo2/" target="_blank">PyGMO v2</a> - if you plan to use optimization module (you can omit it if you don’t know yet)</li>
                 </ul>
             </div>
         </div>
@@ -135,11 +135,11 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1>Examples</h1>
-		<h3>How to run:</h3>
+        <h3>How to run:</h3>
                 <p class="text-justify">
-		Download PyLTEs repository. You can make it via git or manually. In directory "PyLTEs" create a file "firstNetwork.py" and copy below code:
-		</p>
-		<pre>
+        Download PyLTEs repository. You can make it via git or manually. In directory "PyLTEs" create a file "firstNetwork.py" and copy below code:
+        </p>
+        <pre>
 from pyltes.network import CellularNetwork
 
 network = CellularNetwork()
@@ -150,29 +150,29 @@ network.connectUsersToTheBestBS()
 
 network.Printer.drawHistogramOfUEThroughput("thrHistogram")
 network.Printer.drawNetwork(fillMethod="SINR", filename="sinrMap")</pre>
-		<p>
-		In terminal run <code>python3.5 firstNetwork.py</code>
-		</p>
-		<p>
-		After few seconds you should see an output on the terminal, and two new image files in the directory:
-		</p>
-		<div class="row">  
-		<div class="col-sm-6"><img class="img-responsive" alt="SINR map" src="files/img/sinrMap.png"></div>       
-		<div class="col-sm-6"><img class="img-responsive" alt="Throughput histogram" src="files/img/thrHistogram.png"></div>
-		</div>
-		<p class="text-justify">
-		That is all, have fun!
+        <p>
+        In terminal run <code>python3.5 firstNetwork.py</code>
+        </p>
+        <p>
+        After few seconds you should see an output on the terminal, and two new image files in the directory:
+        </p>
+        <div class="row">  
+        <div class="col-sm-6"><img class="img-responsive" alt="SINR map" src="files/img/sinrMap.png"></div>       
+        <div class="col-sm-6"><img class="img-responsive" alt="Throughput histogram" src="files/img/thrHistogram.png"></div>
+        </div>
+        <p class="text-justify">
+        That is all, have fun!
 Note: if you have other Python version you should run this script with your Python.
-		</p>
+        </p>
 <h3>Example network files:</h3>
-		<p>
-		Download these files, copy to the directory with PyLTEs (as code from the above) and run in Python:
+        <p>
+        Download these files, copy to the directory with PyLTEs (as code from the above) and run in Python:
                 <ul>
-                    <li><code>python3.5 firstNetwork.py</code> <a href="files/examples/firstNetwork.py">script</a></li>
-                    <li><code>python3.5 smallNetworkSINR.py</code> <a href="files/examples/smallNetworkSINR.py">script</a></li>
-                    <li><code>python3.5 smallNetworkSectors.py</code> <a href="files/examples/smallNetworkSectors.py">script</a></li>
+                    <li><code>python3.5 firstNetwork.py</code> (download <a href="files/examples/firstNetwork.py">script</a>)</li>
+                    <li><code>python3.5 smallNetworkSINR.py</code> (download <a href="files/examples/smallNetworkSINR.py">script</a>)</li>
+                    <li><code>python3.5 smallNetworkSectors.py</code> (download <a href="files/examples/smallNetworkSectors.py">script</a>)</li>
                 </ul>
-		</p>
+        </p>
             </div>
         </div>
         <!-- /.row -->
@@ -187,8 +187,8 @@ Note: if you have other Python version you should run this script with your Pyth
         <div class="row">
             <div class="col-lg-12">
                 <h1>Research</h1>
-		<h3>Research papers that used PyLTEs:</h3>
-		<p>
+        <h3>Research papers that used PyLTEs:</h3>
+        <p>
                 <ul>
                     <li>P. Masek, J. Hosek, Y. Zakaria, D. Uhlir, V. Novotny, M. Slabicki, K. Grochla, <b>"Experimental Evaluation of RAN Modelling in Indoor LTE Deployment"</b>, in Ultra Modern Telecommunications and Control Systems and Workshops (ICUMT), 2015 7th International Congress on, Brno 2015 <a href="http://dx.doi.org/10.1109/ICUMT.2015.7382425" target="_blank">Link</a></li>
                     <li>Slabicki, Mariusz, and Krzysztof Grochla, <b>"Local Approach to Power Management in LTE Networks"</b>, 38th International Conference on Telecommunications and Signal Processing (TSP), 2015 <a href="http://dx.doi.org/10.1109/TSP.2015.7296239" target="_blank">Link</a></li>
@@ -196,7 +196,7 @@ Note: if you have other Python version you should run this script with your Pyth
                     <li>Slabicki, Mariusz, and Krzysztof Grochla, <b>"The Automatic Configuration of Transmit Power in LTE Networks Based on Throughput Estimation"</b>, IEEE 33rd International Performance Computing and Communications Conference (IPCCC), 2014 <a href="http://dx.doi.org/10.1109/PCCC.2014.7017020" target="_blank">Link</a></li>
                 </ul>
                 Please let me know if you used this tool, I will be more than happy to add your paper here.
-		</p>
+        </p>
             </div>
         </div>
         <!-- /.row -->
@@ -211,15 +211,15 @@ Note: if you have other Python version you should run this script with your Pyth
         <div class="row">
             <div class="col-lg-12">
                 <h1>Todo / Work in Progress</h1>
-		<h3>Future plans</h3>
-		<p>
+        <h3>Future plans</h3>
+        <p>
                 <ul>
                     <li>documentation,</li>
                     <li>functions to generate network (in file generator.py),</li>
                     <li>code cleaning (there is a lot to do),</li>
                     <li>improve this page.</li>
                 </ul>
-		</p>
+        </p>
             </div>
         </div>
         <!-- /.row -->
@@ -234,17 +234,17 @@ Note: if you have other Python version you should run this script with your Pyth
         <div class="row">
             <div class="col-lg-12">
                 <h1>Contribution</h1>
-		<h3>People</h3>
-		<p>
+        <h3>People</h3>
+        <p>
                 <ul>
-                    <li>Mariusz Slabicki - main creator <a href="https://www.iitis.pl/~mslabicki/" target="_blank">www</a></li>
+                    <li>Mariusz Slabicki - main creator (<a href="https://www.iitis.pl/~mslabicki/" target="_blank">www</a>)</li>
                     <li>Konrad Polys - sereval small, but important improvements</li>
                 </ul>
-		</p>
-		<h3>Call for participation</h3>
-		<p>
-		If you see any opportunity to contribute to this project, do not hestitate!
-		</p>
+        </p>
+        <h3>Call for participation</h3>
+        <p>
+        If you see any opportunity to contribute to this project, do not hestitate!
+        </p>
             </div>
         </div>
         <!-- /.row -->
