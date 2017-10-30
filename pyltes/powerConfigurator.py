@@ -6,8 +6,8 @@ from pyltes.powerOptimizationProblemsDef import maximalThroughputProblemRR
 from pyltes.powerOptimizationProblemsDef import local_maximalThroughputProblemRR
 from pyltes.powerOptimizationProblemsDef import maximalMedianThrProblemRR
 from pyltes.powerOptimizationProblemsDef import local_maximalMedianThrProblemRR
-# from pyltes.powerOptimizationProblemsDef import minInterQuartileRangeroblemRR
-# from pyltes.powerOptimizationProblemsDef import local_minInterQuartileRangeroblemRR
+from pyltes.powerOptimizationProblemsDef import minInterQuartileRangeroblemRR
+from pyltes.powerOptimizationProblemsDef import local_minInterQuartileRangeroblemRR
 
 import copy
 import math
@@ -61,12 +61,14 @@ class pygmoPowerConfigurator:
 
         if objectiveFunction == "minIQRthr":
             if method == "local":
-                prob = local_minInterQuartileRangeroblemRR(dim=len(localBsVector))
+                localListBS = []
                 for i in range(len(localBsVector)):
-                    prob.bsList.append(localBsVector[i,0])
+                    localListBS.append(localBsVector[i,0])
+                prob = pg.problem(local_minInterQuartileRangeroblemRR(dim=len(localBsVector), networkInstance=self.parent, lowerTxLimit=self.parent.minTxPower, upperTxLimit=self.parent.maxTxPower, localListBS=localListBS))
 
             if method == "global":
-                prob = minInterQuartileRangeroblemRR(dim=len(self.parent.bs))
+                prob = pg.problem(minInterQuartileRangeroblemRR(dim=len(self.parent.bs), networkInstance=self.parent, lowerTxLimit=self.parent.minTxPower, upperTxLimit=self.parent.maxTxPower))
+
 
         prob.siec = copy.deepcopy(self.parent)
         # algo = algorithm.sga(gen=sgaGenerations)
