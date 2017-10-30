@@ -4,8 +4,8 @@ import pygmo as pg
 #
 from pyltes.powerOptimizationProblemsDef import maximalThroughputProblemRR
 from pyltes.powerOptimizationProblemsDef import local_maximalThroughputProblemRR
-# from pyltes.powerOptimizationProblemsDef import maximalMedianThrProblemRR
-# from pyltes.powerOptimizationProblemsDef import local_maximalMedianThrProblemRR
+from pyltes.powerOptimizationProblemsDef import maximalMedianThrProblemRR
+from pyltes.powerOptimizationProblemsDef import local_maximalMedianThrProblemRR
 # from pyltes.powerOptimizationProblemsDef import minInterQuartileRangeroblemRR
 # from pyltes.powerOptimizationProblemsDef import local_minInterQuartileRangeroblemRR
 
@@ -41,7 +41,6 @@ class pygmoPowerConfigurator:
             localBsVector = np.asarray(localBsVector)
         if objectiveFunction == "averageThr":
             if method == "local":
-                # prob = local_maximalThroughputProblemRR(dim=len(localBsVector))
                 localListBS = []
                 for i in range(len(localBsVector)):
                     localListBS.append(localBsVector[i,0])
@@ -50,15 +49,15 @@ class pygmoPowerConfigurator:
             if method == "global":
                 prob = pg.problem(maximalThroughputProblemRR(dim=len(self.parent.bs), networkInstance=self.parent, lowerTxLimit=self.parent.minTxPower, upperTxLimit=self.parent.maxTxPower))
 
-
         if objectiveFunction == "medianThr":
             if method == "local":
-                prob = local_maximalMedianThrProblemRR(dim=len(localBsVector))
+                localListBS = []
                 for i in range(len(localBsVector)):
-                    prob.bsList.append(localBsVector[i,0])
+                    localListBS.append(localBsVector[i,0])
+                prob = pg.problem(local_maximalMedianThrProblemRR(dim=len(localBsVector), networkInstance=self.parent, lowerTxLimit=self.parent.minTxPower, upperTxLimit=self.parent.maxTxPower, localListBS=localListBS))
 
             if method == "global":
-                prob = maximalMedianThrProblemRR(dim=len(self.parent.bs))
+                prob = pg.problem(maximalMedianThrProblemRR(dim=len(self.parent.bs), networkInstance=self.parent, lowerTxLimit=self.parent.minTxPower, upperTxLimit=self.parent.maxTxPower))
 
         if objectiveFunction == "minIQRthr":
             if method == "local":
