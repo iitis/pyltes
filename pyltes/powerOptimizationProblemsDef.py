@@ -50,6 +50,53 @@ class local_maximalThroughputProblemRR:
     def get_nix(self):
         return self.dim
 
+class maximalMedianThrProblemRR:
+    def __init__(self, networkInstance, dim, lowerTxLimit, upperTxLimit):
+        self.dim = dim
+        self.networkInstance = networkInstance
+        self.lowerLimitsVector = []
+        self.upperLimitsVector = []
+        for i in range(dim):
+            self.lowerLimitsVector.append(lowerTxLimit)
+            self.upperLimitsVector.append(upperTxLimit)
+
+    def fitness(self, x):
+        for i in range(len(x)):
+            self.networkInstance.bs[i].outsidePower = x[i]
+        ueThroughputVector = self.networkInstance.returnRealUEThroughputVectorRR()
+        objectiveValue = np.median(ueThroughputVector)
+        return (-objectiveValue, )
+
+    def get_bounds(self):
+        return self.lowerLimitsVector, self.upperLimitsVector
+
+    def get_nix(self):
+        return self.dim
+
+class local_maximalMedianThrProblemRR:
+    def __init__(self, networkInstance, dim, lowerTxLimit, upperTxLimit, localListBS):
+        self.dim = dim
+        self.networkInstance = networkInstance
+        self.lowerLimitsVector = []
+        self.upperLimitsVector = []
+        self.bsList = localListBS
+        for i in range(dim):
+            self.lowerLimitsVector.append(lowerTxLimit)
+            self.upperLimitsVector.append(upperTxLimit)
+
+    def fitness(self, x):
+        for i in range(len(x)):
+            self.networkInstance.bs[int(self.bsList[i])].outsidePower = x[i]
+        ueThroughputVector = self.networkInstance.returnRealUEThroughputVectorRR()
+        objectiveValue = np.median(ueThroughputVector)
+        return (-objectiveValue, )
+
+    def get_bounds(self):
+        return self.lowerLimitsVector, self.upperLimitsVector
+
+    def get_nix(self):
+        return self.dim
+
 # class local_maximalThroughputProblemRR(base):
 #     def __init__(self, dim = 1):
 #         super().__init__(dim, dim)
