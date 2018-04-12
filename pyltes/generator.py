@@ -46,8 +46,8 @@ class Generator:
             bs = devices.BS()
             bs.ID = i
             bs.turnedOn = True
-            self.omnidirectionalAntenna = omnidirectionalAntennas
-            self.useSFR = SFR
+            bs.omnidirectionalAntenna = omnidirectionalAntennas
+            bs.useSFR = SFR
             self.parent.bs.append(bs)
 
         if numberOfBS == 36:
