@@ -23,7 +23,6 @@ class Generator:
         bs.y = self.parent.constraintAreaMaxY/2
         self.parent.bs.append(bs)
 
-
     def createHexagonalBSdeployment(self, radius, numberOfBS = 36, omnidirectionalAntennas = False, SFR = False):
         d_x = math.sqrt(3)/2 * radius
         d_y = radius/2
@@ -77,6 +76,55 @@ class Generator:
                         self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].x = (3*(column_number+1)-1) * d_x
                         self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].y += d_y
                         self.parent.bs[multiplier*row_number + 3*column_number + sector_nb].angle += 60
+
+    def createHoneycombBSdeployment(self, radius, numberOfBS = 36, omnidirectionalAntennas = False, SFR = False):
+        """This function creates a honeycomb deployment with any number of Base Stations eg. 2 or 9
+        In case of sector antennas the number will be increased to by multiply of 3 because it's
+        assumed that there are 3 Base Stations at the spot with 120 degress antennas """
+
+        if not omnidirectionalAntennas:
+            if numberOfBS % 3 == 1:
+                print("Incorrect number of BaseStations for sector antennas. Increasing the number.")
+            numberOfBS = math.ceil(numberOfBS / 3.0)
+
+        x = int(math.ceil(math.sqrt(numberOfBS)))
+        y = int(math.floor(math.sqrt(numberOfBS)))
+        if x*y < numberOfBS:
+            y += 1
+        print(x, y)
+
+        self.parent.constraintAreaMaxX = x * radius + 0.5 * radius
+        self.parent.constraintAreaMaxY = y * radius
+        self.parent.radius = radius
+
+        xc = 0
+        yc = 0
+        xo = 1
+
+        for i in range(0, numberOfBS):
+            sectors = 1
+            if not omnidirectionalAntennas:
+                sectors = 3
+
+            for j in range(sectors):
+                bs = devices.BS()
+                bs.ID = i*sectors + j
+                bs.turnedOn = True
+                bs.omnidirectionalAntenna = omnidirectionalAntennas
+                bs.useSFR = SFR
+                bs.Rc = radius
+                bs.angle = 120 * j
+                bs.x = (0.5 * radius) * (xc + 1) + (0.5 * radius) * xo
+                bs.y = (0.5 * radius) * (yc + 1)
+                self.parent.bs.append(bs)
+            xc += 2
+            if xc > 2*x-1:
+                xc = 0
+                yc +=2
+                if (yc/2) % 2 == 1:
+                    xo = 0
+                else:
+                    xo = 1
 
     def loadDeploymentFromFile(self, filename):
         self.parent.constraintAreaMaxX = 3000
